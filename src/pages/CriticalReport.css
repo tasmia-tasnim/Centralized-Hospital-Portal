@@ -1,0 +1,342 @@
+.cr-page {
+  background-color: var(--color-bg-page);
+  min-height: 100vh;
+}
+
+/* Header */
+.cr-header-wrapper {
+  background-color: var(--color-bg-white);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cr-header {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.cr-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.cr-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.cr-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.cr-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* Sidebar */
+.cr-sidebar {
+  position: sticky;
+  top: 100px;
+}
+
+.cr-patient-card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px 20px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.cr-patient-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--color-bg-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.cr-patient-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.cr-patient-id {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+/* Sidebar Nav */
+.cr-nav {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+.cr-nav-item {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cr-nav-item:hover {
+  background-color: var(--color-bg-page);
+  color: var(--color-primary);
+}
+
+.cr-nav-item.active {
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+  font-weight: 600;
+}
+
+/* Main Content */
+.cr-main {
+  width: 100%;
+}
+
+.cr-steps-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Steps */
+.cr-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cr-step-margin {
+  margin-top: 32px;
+}
+
+.cr-step-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-primary-dark);
+  color: var(--color-text-white);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cr-step-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* Step Content Row */
+.cr-step-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding-left: 36px;
+}
+
+/* Report Card */
+.cr-report-card {
+  flex: 1;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+
+.cr-detail-group {
+  margin-bottom: 20px;
+}
+
+.cr-detail-group:last-child {
+  margin-bottom: 0;
+}
+
+.cr-detail-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.cr-detail-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Alert Box */
+.cr-alert-box {
+  width: 260px;
+  background: #FFF5F5;
+  border: 1px solid #FECACA;
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.cr-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.cr-alert-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #DC2626;
+}
+
+.cr-alert-desc {
+  font-size: 13px;
+  color: #991B1B;
+  line-height: 1.5;
+}
+
+/* Results Table */
+.cr-results-table {
+  flex: 1;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.cr-result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cr-result-row:last-child {
+  border-bottom: none;
+}
+
+.cr-result-name {
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+.cr-result-status {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cr-result-status.high {
+  color: #B91C1C;
+}
+
+.cr-result-status.low {
+  color: #0369A1;
+}
+
+/* Follow Up Box */
+.cr-followup-box {
+  width: 260px;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.cr-followup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.cr-followup-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.cr-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.cr-close-btn:hover {
+  background-color: var(--color-bg-page);
+}
+
+.cr-followup-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* Action Buttons */
+.cr-action-buttons {
+  padding-left: 36px;
+  display: flex;
+  gap: 12px;
+}
+
+.cr-btn-primary {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-white);
+  background-color: var(--color-primary-dark);
+  border: 1px solid var(--color-primary-dark);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.cr-btn-primary:hover {
+  opacity: 0.9;
+}
+
+.cr-btn-secondary {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-primary-dark);
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cr-btn-secondary:hover {
+  background-color: var(--color-bg-page);
+}

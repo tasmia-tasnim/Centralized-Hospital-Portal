@@ -1,0 +1,341 @@
+.mr-page {
+  background-color: var(--color-bg-page);
+}
+
+.mr-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+/* Header */
+.mr-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.mr-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+}
+
+.mr-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+
+.mr-patient-meta {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+}
+
+.mr-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mr-meta-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mr-meta-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Layout */
+.mr-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* Sidebar */
+.mr-sidebar {
+  position: sticky;
+  top: 100px;
+}
+
+.mr-patient-card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.mr-patient-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.mr-patient-privacy {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+.mr-download-btn {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-bg-white);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mr-download-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Sidebar Nav */
+.mr-nav {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.mr-nav-item {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 450;
+  color: var(--color-text-secondary);
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+}
+
+.mr-nav-item:hover {
+  background-color: var(--color-bg-mint);
+  color: var(--color-primary);
+}
+
+.mr-nav-item.active {
+  background-color: var(--color-bg-mint);
+  color: var(--color-primary);
+  font-weight: 600;
+  border-left-color: var(--color-primary);
+}
+
+/* Timeline */
+.mr-timeline {
+  position: relative;
+}
+
+.mr-timeline-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  padding-left: 40px;
+}
+
+.mr-timeline-line {
+  position: relative;
+  padding-left: 40px;
+}
+
+.mr-timeline-line::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 40px;
+  width: 2px;
+  background-color: var(--color-border);
+}
+
+/* Event */
+.mr-event {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.mr-event:last-child {
+  margin-bottom: 0;
+}
+
+.mr-event-dot {
+  position: absolute;
+  left: -33px;
+  top: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.mr-event-dot-green {
+  background-color: var(--color-bg-mint);
+  border: 2px solid var(--color-primary);
+}
+
+.mr-event-dot-amber {
+  background-color: #FEF3C7;
+  border: 2px solid #D97706;
+}
+
+.mr-event-dot-gray {
+  background-color: #F3F4F6;
+  border: 2px solid #D1D5DB;
+}
+
+/* Event Card */
+.mr-event-card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+
+.mr-event-card-upcoming {
+  border-style: dashed;
+}
+
+.mr-event-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.mr-event-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.mr-upcoming-title {
+  color: var(--color-primary);
+}
+
+.mr-vip-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-white);
+  background-color: #16A34A;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.5px;
+}
+
+.mr-event-bangla {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 14px;
+}
+
+.mr-event-details {
+  display: flex;
+  gap: 48px;
+  margin-bottom: 4px;
+}
+
+.mr-detail-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 3px;
+}
+
+.mr-detail-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.mr-event-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.mr-report-text {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.mr-download-pdf {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-bg-white);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mr-download-pdf:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.mr-upcoming-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.mr-upcoming-text {
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+
+.mr-book-slot-btn {
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-bg-white);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mr-book-slot-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}

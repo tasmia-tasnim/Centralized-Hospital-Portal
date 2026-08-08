@@ -1,0 +1,147 @@
+.navbar {
+  background-color: var(--color-bg-white);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand-text {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.3px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-link {
+  font-size: 14px;
+  font-weight: 450;
+  color: var(--color-text-primary);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.navbar-link:hover {
+  background-color: var(--color-bg-mint);
+}
+
+.navbar-link.active {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.navbar-chevron {
+  margin-top: 1px;
+}
+
+.navbar-dropdown {
+  position: relative;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-doctor-login {
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.btn-doctor-login:hover {
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+}
+
+.btn-patient-login {
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-text-white);
+  background-color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.btn-patient-login:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.navbar-dropdown {
+  position: relative;
+}
+
+.navbar-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: 8px 0;
+  min-width: 200px;
+  display: none;
+  z-index: 50;
+}
+
+.navbar-dropdown:hover .navbar-dropdown-menu {
+  display: block;
+}
+
+.navbar-dropdown-item {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.navbar-dropdown-item:hover {
+  background-color: var(--color-bg-mint);
+  color: var(--color-primary);
+}
+

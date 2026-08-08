@@ -1,0 +1,48 @@
+.topbar {
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  font-size: 13px;
+  font-weight: 400;
+  padding: 8px 0;
+}
+
+.topbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.topbar-emergency {
+  font-weight: 500;
+}
+
+.topbar-handle {
+  opacity: 0.85;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.topbar-lang,
+.topbar-contact {
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.topbar-lang:hover,
+.topbar-contact:hover {
+  opacity: 1;
+}
