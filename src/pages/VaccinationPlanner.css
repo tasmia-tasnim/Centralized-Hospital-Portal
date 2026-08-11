@@ -1,0 +1,317 @@
+/* ===== Vaccination Planner Page ===== */
+.vp-page {
+  background-color: var(--color-bg-page);
+  min-height: 100vh;
+}
+
+.vp-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* Hero */
+.vp-hero {
+  padding: var(--spacing-xl) 0 var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.vp-hero-title {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 6px;
+}
+
+.vp-hero-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* Section */
+.vp-section {
+  padding-bottom: var(--spacing-3xl);
+}
+
+.vp-section-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.vp-section-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 6px;
+}
+
+.vp-section-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* Vaccine Grid */
+.vp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* Vaccine Card */
+.vp-card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.vp-card:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.vp-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.vp-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-bg-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.vp-card-icon-plus {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+}
+
+.vp-card-name {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.vp-card-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.vp-card-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  transition: color 0.2s;
+}
+
+.vp-card:hover .vp-card-link {
+  color: var(--color-primary-dark);
+}
+
+.vp-card-others {
+  border-style: dashed;
+  border-color: var(--color-border);
+}
+
+.vp-card-others:hover {
+  border-color: var(--color-primary-light);
+  border-style: dashed;
+}
+
+/* Status Badges */
+.vp-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.vp-badge-up-to-date {
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+}
+
+.vp-badge-due-soon {
+  background-color: #F59E0B;
+  color: #FFFFFF;
+}
+
+.vp-badge-not-started {
+  background-color: var(--color-text-secondary);
+  color: var(--color-text-white);
+}
+
+/* ===== Modal ===== */
+.vp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: vp-fadeIn 0.2s ease;
+}
+
+@keyframes vp-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vp-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.vp-modal {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: vp-slideUp 0.25s ease;
+  position: relative;
+}
+
+.vp-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.vp-modal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-bg-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.vp-modal-title-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vp-modal-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.vp-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.vp-modal-close:hover {
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+.vp-modal-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.vp-modal-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vp-modal-label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.vp-modal-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.vp-modal-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s;
+}
+
+.vp-modal-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .vp-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .vp-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .vp-modal {
+    margin: 0 16px;
+  }
+}
+
+@media (max-width: 440px) {
+  .vp-grid {
+    grid-template-columns: 1fr;
+  }
+}

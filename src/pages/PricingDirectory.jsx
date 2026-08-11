@@ -1,68 +1,70 @@
 import { useState } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 import './PricingDirectory.css'
-
-const allTests = [
-  {
-    id: 1,
-    name: 'Complete Blood Count (CBC)',
-    department: 'Haematology',
-    price: 450,
-    turnaround: 'Same day',
-    branches: 'All branches',
-    updated: '1 Jun 2026',
-    locations: null
-  },
-  {
-    id: 2,
-    name: 'Lipid Profile',
-    department: 'Biochemistry',
-    price: 900,
-    turnaround: '4–6 hours',
-    branches: null,
-    updated: '2 Jun 2026',
-    locations: [
-      { name: 'Elephant Road (Main)', price: 900 },
-      { name: 'Dhanmondi', price: 950 }
-    ],
-    availability: 'Available'
-  },
-  {
-    id: 3,
-    name: 'Thyroid Function (TSH)',
-    department: 'Endocrinology',
-    price: 650,
-    turnaround: 'Next day',
-    branches: 'All branches',
-    updated: '28 May 2026',
-    locations: null
-  },
-  {
-    id: 4,
-    name: 'Blood Sugar (Fasting)',
-    department: 'Biochemistry',
-    price: 200,
-    turnaround: 'Same day',
-    branches: 'All branches',
-    updated: '30 May 2026',
-    locations: null
-  },
-  {
-    id: 5,
-    name: 'Echocardiogram',
-    department: 'Cardiology',
-    price: 2200,
-    turnaround: 'By appointment',
-    branches: 'Elephant Road, Dhanmondi',
-    updated: '25 May 2026',
-    locations: null
-  }
-]
-
-const quickFilters = ['CBC', 'Lipid Profile', 'Thyroid (TSH)', 'Blood Sugar', 'Echocardiogram']
 
 export default function PricingDirectory() {
   const [searchQuery, setSearchQuery] = useState('')
   const [estimate, setEstimate] = useState([])
+  const { lang } = useLanguage()
+
+  const allTests = [
+    {
+      id: 1,
+      name: lang === 'bn' ? 'কমপ্লিট ব্লাড কাউন্ট (CBC)' : 'Complete Blood Count (CBC)',
+      department: lang === 'bn' ? 'হেমাটোলজি' : 'Haematology',
+      price: 450,
+      turnaround: lang === 'bn' ? 'একই দিন' : 'Same day',
+      branches: lang === 'bn' ? 'সকল শাখা' : 'All branches',
+      updated: lang === 'bn' ? '১ জুন ২০২৬' : '1 Jun 2026',
+      locations: null
+    },
+    {
+      id: 2,
+      name: lang === 'bn' ? 'লিপিড প্রোফাইল' : 'Lipid Profile',
+      department: lang === 'bn' ? 'বায়োকেমিস্ট্রি' : 'Biochemistry',
+      price: 900,
+      turnaround: lang === 'bn' ? '৪–৬ ঘণ্টা' : '4–6 hours',
+      branches: null,
+      updated: lang === 'bn' ? '২ জুন ২০২৬' : '2 Jun 2026',
+      locations: [
+        { name: lang === 'bn' ? 'এলিফ্যান্ট রোড (প্রধান)' : 'Elephant Road (Main)', price: 900 },
+        { name: lang === 'bn' ? 'ধানমন্ডি' : 'Dhanmondi', price: 950 }
+      ],
+      availability: lang === 'bn' ? 'উপলব্ধ' : 'Available'
+    },
+    {
+      id: 3,
+      name: lang === 'bn' ? 'থাইরয়েড ফাংশন (TSH)' : 'Thyroid Function (TSH)',
+      department: lang === 'bn' ? 'এন্ডোক্রিনোলজি' : 'Endocrinology',
+      price: 650,
+      turnaround: lang === 'bn' ? 'পরের দিন' : 'Next day',
+      branches: lang === 'bn' ? 'সকল শাখা' : 'All branches',
+      updated: lang === 'bn' ? '২৮ মে ২০২৬' : '28 May 2026',
+      locations: null
+    },
+    {
+      id: 4,
+      name: lang === 'bn' ? 'ব্লাড সুগার (ফাস্টিং)' : 'Blood Sugar (Fasting)',
+      department: lang === 'bn' ? 'বায়োকেমিস্ট্রি' : 'Biochemistry',
+      price: 200,
+      turnaround: lang === 'bn' ? 'একই দিন' : 'Same day',
+      branches: lang === 'bn' ? 'সকল শাখা' : 'All branches',
+      updated: lang === 'bn' ? '৩০ মে ২০২৬' : '30 May 2026',
+      locations: null
+    },
+    {
+      id: 5,
+      name: lang === 'bn' ? 'ইকোকার্ডিওগ্রাম' : 'Echocardiogram',
+      department: lang === 'bn' ? 'কার্ডিওলজি' : 'Cardiology',
+      price: 2200,
+      turnaround: lang === 'bn' ? 'অ্যাপয়েন্টমেন্ট দ্বারা' : 'By appointment',
+      branches: lang === 'bn' ? 'এলিফ্যান্ট রোড, ধানমন্ডি' : 'Elephant Road, Dhanmondi',
+      updated: lang === 'bn' ? '২৫ মে ২০২৬' : '25 May 2026',
+      locations: null
+    }
+  ]
+
+  const quickFilters = ['CBC', 'Lipid Profile', 'Thyroid (TSH)', 'Blood Sugar', 'Echocardiogram']
 
   const filteredTests = searchQuery
     ? allTests.filter(t =>
@@ -88,8 +90,8 @@ export default function PricingDirectory() {
       <div className="pricing-content">
         {/* Header */}
         <div className="pricing-header">
-          <h1 className="pricing-title">Pricing Directory</h1>
-          <p className="pricing-subtitle">Search test costs by name, and build a running estimate before you visit</p>
+          <h1 className="pricing-title">{lang === 'bn' ? 'মূল্য তালিকা ডিরেক্টরি' : 'Pricing Directory'}</h1>
+          <p className="pricing-subtitle">{lang === 'bn' ? 'নাম দ্বারা টেস্টের খরচ খুঁজুন এবং আপনার ভিজিটের আগে একটি অনুমিত খরচ তৈরি করুন' : 'Search test costs by name, and build a running estimate before you visit'}</p>
         </div>
 
         {/* Main layout */}
@@ -99,7 +101,7 @@ export default function PricingDirectory() {
             <div className="pricing-search-bar">
               <input
                 type="text"
-                placeholder="Search a test, e.g. Lipid Profile"
+                placeholder={lang === 'bn' ? "টেস্ট খুঁজুন, যেমন লিপিড প্রোফাইল" : "Search a test, e.g. Lipid Profile"}
                 className="pricing-search-input"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -110,7 +112,7 @@ export default function PricingDirectory() {
                     <line x1="18" y1="6" x2="6" y2="18"/>
                     <line x1="6" y1="6" x2="18" y2="18"/>
                   </svg>
-                  Clear
+                  {lang === 'bn' ? 'মুছে ফেলুন' : 'Clear'}
                 </button>
               )}
             </div>
@@ -130,8 +132,8 @@ export default function PricingDirectory() {
 
             {/* Results Header */}
             <div className="pricing-results-header">
-              <span className="pricing-results-title">Search Results</span>
-              <span className="pricing-results-count">{filteredTests.length} tests found</span>
+              <span className="pricing-results-title">{lang === 'bn' ? 'অনুসন্ধানের ফলাফল' : 'Search Results'}</span>
+              <span className="pricing-results-count">{filteredTests.length} {lang === 'bn' ? 'টি টেস্ট পাওয়া গেছে' : 'tests found'}</span>
             </div>
 
             {/* Test Cards */}
@@ -157,7 +159,7 @@ export default function PricingDirectory() {
                     {test.branches && (
                       <span className="pricing-test-meta-item">{test.branches}</span>
                     )}
-                    <span className="pricing-test-meta-item">Updated: {test.updated}</span>
+                    <span className="pricing-test-meta-item">{lang === 'bn' ? 'আপডেট:' : 'Updated:'} {test.updated}</span>
                   </div>
 
                   {test.locations && (
@@ -178,7 +180,7 @@ export default function PricingDirectory() {
                     className="pricing-add-btn"
                     onClick={() => addToEstimate(test)}
                   >
-                    + Add to Estimate
+                    + {lang === 'bn' ? 'হিসাবে যুক্ত করুন' : 'Add to Estimate'}
                   </button>
                 </div>
               ))}
@@ -188,9 +190,9 @@ export default function PricingDirectory() {
           {/* Cost Estimator Sidebar */}
           <div className="pricing-sidebar">
             <div className="pricing-estimator">
-              <h3 className="pricing-estimator-title">COST ESTIMATOR</h3>
+              <h3 className="pricing-estimator-title">{lang === 'bn' ? 'কস্ট এস্টিমেটর' : 'COST ESTIMATOR'}</h3>
               {estimate.length === 0 ? (
-                <p className="pricing-estimator-empty">No tests selected yet.</p>
+                <p className="pricing-estimator-empty">{lang === 'bn' ? 'এখনও কোনো টেস্ট নির্বাচন করা হয়নি।' : 'No tests selected yet.'}</p>
               ) : (
                 <div className="pricing-estimator-items">
                   {estimate.map((test) => (
@@ -210,7 +212,7 @@ export default function PricingDirectory() {
                 </div>
               )}
               <div className="pricing-estimator-total">
-                <span className="pricing-estimator-total-label">Estimated Total</span>
+                <span className="pricing-estimator-total-label">{lang === 'bn' ? 'আনুমানিক মোট' : 'Estimated Total'}</span>
                 <span className="pricing-estimator-total-value">৳{totalEstimate}</span>
               </div>
             </div>

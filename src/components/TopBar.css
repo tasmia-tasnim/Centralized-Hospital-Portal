@@ -35,14 +35,42 @@
   gap: 20px;
 }
 
-.topbar-lang,
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  background-color: #F1F4F9; /* matching screenshot pill color */
+  border-radius: 9999px;
+  padding: 4px;
+  cursor: pointer;
+  color: #4A5568;
+}
+
+.lang-text {
+  padding: 4px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 9999px;
+  transition: all 0.2s;
+}
+
+.lang-text.active {
+  background-color: #0F2942; /* matching screenshot active pill color */
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.lang-sep {
+  color: #A0AEC0;
+  margin: 0 2px;
+  font-size: 14px;
+}
+
 .topbar-contact {
   cursor: pointer;
   opacity: 0.85;
   transition: opacity 0.2s;
 }
 
-.topbar-lang:hover,
 .topbar-contact:hover {
   opacity: 1;
 }

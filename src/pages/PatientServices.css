@@ -1,0 +1,75 @@
+.ps-page {
+  background-color: var(--color-bg-page);
+  min-height: calc(100vh - 140px);
+  padding: 40px 20px;
+}
+
+.ps-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.ps-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.ps-title {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 12px;
+}
+
+.ps-desc {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+}
+
+.ps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.ps-card {
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-decoration: none;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.ps-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-light);
+}
+
+.ps-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.ps-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.ps-card-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}

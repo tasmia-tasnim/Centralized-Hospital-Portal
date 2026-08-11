@@ -1,8 +1,18 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLanguage } from '../context/LanguageContext'
+import { useAuth } from '../context/AuthContext'
 import './Navbar.css'
 
 export default function Navbar() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { t } = useLanguage()
+  const { user, logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   return (
     <nav className="navbar">
@@ -19,11 +29,11 @@ export default function Navbar() {
 
         <div className="navbar-links">
           <Link to="/" className={`navbar-link ${location.pathname === '/' ? 'active' : ''}`}>
-            Home
+            {t('home')}
           </Link>
           <div className="navbar-dropdown group">
             <span className="navbar-link">
-              Departments
+              {t('departments')}
               <svg className="navbar-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -36,23 +46,55 @@ export default function Navbar() {
               <div className="navbar-dropdown-item">Oncology</div>
             </div>
           </div>
-          <div className="navbar-dropdown">
-            <span className="navbar-link">
-              Patient Services
+          <div className="navbar-dropdown group">
+            <span className="navbar-link" style={{cursor: 'pointer'}}>
+              {t('patientServices')}
               <svg className="navbar-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </span>
+            <div className="navbar-dropdown-menu">
+              <Link to="/medical-record" className="navbar-dropdown-item">{t('medicalRecord')}</Link>
+              <Link to="/bed-availability" className="navbar-dropdown-item">{t('bedAvailability')}</Link>
+              <Link to="/vaccination-planner" className="navbar-dropdown-item">{t('vaccinationPlanner')}</Link>
+              <Link to="/critical-report" className="navbar-dropdown-item">{t('criticalReport')}</Link>
+              <Link to="/ambulance-service" className="navbar-dropdown-item">{t('ambulanceService')}</Link>
+              <Link to="/book-appointment" className="navbar-dropdown-item">{t('bookAppointment')}</Link>
+              <Link to="/symptom-checker" className="navbar-dropdown-item">{t('symptomChecker')}</Link>
+              <Link to="/pricing" className="navbar-dropdown-item">{t('pricingDirectory')}</Link>
+              <Link to="/blood-donor-network" className="navbar-dropdown-item">{t('bloodDonorNetwork')}</Link>
+            </div>
           </div>
-          <Link to="/book-appointment" className={`navbar-link ${location.pathname === '/book-appointment' ? 'active' : ''}`}>Find a Doctor</Link>
+          <Link to="/book-appointment" className={`navbar-link ${location.pathname === '/book-appointment' ? 'active' : ''}`}>{t('findDoctor')}</Link>
           <Link to="/blood-bank" className={`navbar-link ${location.pathname === '/blood-bank' ? 'active' : ''}`}>
-            Blood Bank
+            {t('bloodBank')}
           </Link>
         </div>
 
         <div className="navbar-actions">
-          <button className="btn-doctor-login">Doctor Login</button>
-          <button className="btn-patient-login">Patient Login</button>
+          {user ? (
+            <>
+              <span className="navbar-user-name">{user.name}</span>
+              <button className="btn-auth btn-signout" onClick={handleLogout}>
+                {t('lang') === 'bn' ? 'সাইন আউট' : 'Sign Out'}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link 
+                to="/auth?mode=signup" 
+                className={`btn-auth ${location.pathname === '/auth' && location.search.includes('mode=signup') ? 'active' : ''}`}
+              >
+                {t('signUp')}
+              </Link>
+              <Link 
+                to="/auth?mode=login" 
+                className={`btn-auth ${location.pathname === '/auth' && location.search.includes('mode=login') ? 'active' : ''}`}
+              >
+                {t('signIn')}
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

@@ -35,86 +35,22 @@
 }
 
 .cr-layout {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 32px;
-  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* Sidebar */
 .cr-sidebar {
-  position: sticky;
-  top: 100px;
-}
-
-.cr-patient-card {
-  background: var(--color-bg-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 24px 20px;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.cr-patient-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: var(--color-bg-mint);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 12px;
-}
-
-.cr-patient-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin-bottom: 4px;
-}
-
-.cr-patient-id {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-}
-
-/* Sidebar Nav */
-.cr-nav {
-  background: var(--color-bg-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  padding: 8px 0;
-}
-
-.cr-nav-item {
-  display: block;
-  width: 100%;
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  text-align: left;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.cr-nav-item:hover {
-  background-color: var(--color-bg-page);
-  color: var(--color-primary);
-}
-
-.cr-nav-item.active {
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-page);
-  font-weight: 600;
+  display: none;
 }
 
 /* Main Content */
 .cr-main {
   width: 100%;
+  max-width: 800px;
 }
 
 .cr-steps-container {
@@ -126,21 +62,21 @@
 .cr-step {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .cr-step-margin {
-  margin-top: 32px;
+  margin-top: 40px;
 }
 
 .cr-step-indicator {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background-color: var(--color-primary-dark);
   color: var(--color-text-white);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -148,7 +84,7 @@
 }
 
 .cr-step-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--color-text-primary);
 }
@@ -157,8 +93,8 @@
 .cr-step-content-row {
   display: flex;
   align-items: flex-start;
-  gap: 24px;
-  padding-left: 36px;
+  gap: 32px;
+  padding-left: 44px;
 }
 
 /* Report Card */
@@ -167,11 +103,11 @@
   background: var(--color-bg-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 24px;
+  padding: 32px;
 }
 
 .cr-detail-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .cr-detail-group:last-child {
@@ -180,44 +116,44 @@
 
 .cr-detail-label {
   display: block;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .cr-detail-value {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-text-primary);
 }
 
 /* Alert Box */
 .cr-alert-box {
-  width: 260px;
+  width: 280px;
   background: #FFF5F5;
   border: 1px solid #FECACA;
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 20px;
 }
 
 .cr-alert-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .cr-alert-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #DC2626;
 }
 
 .cr-alert-desc {
-  font-size: 13px;
+  font-size: 15px;
   color: #991B1B;
   line-height: 1.5;
 }
@@ -235,7 +171,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -244,12 +180,12 @@
 }
 
 .cr-result-name {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-text-primary);
 }
 
 .cr-result-status {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -263,22 +199,22 @@
 
 /* Follow Up Box */
 .cr-followup-box {
-  width: 260px;
+  width: 280px;
   background: var(--color-bg-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 20px;
 }
 
 .cr-followup-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .cr-followup-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--color-text-primary);
 }
@@ -297,21 +233,21 @@
 }
 
 .cr-followup-desc {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
 /* Action Buttons */
 .cr-action-buttons {
-  padding-left: 36px;
+  padding-left: 44px;
   display: flex;
-  gap: 12px;
+  gap: 16px;
 }
 
 .cr-btn-primary {
-  padding: 10px 24px;
-  font-size: 14px;
+  padding: 12px 28px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-text-white);
   background-color: var(--color-primary-dark);
@@ -326,8 +262,8 @@
 }
 
 .cr-btn-secondary {
-  padding: 10px 24px;
-  font-size: 14px;
+  padding: 12px 28px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-primary-dark);
   background-color: var(--color-bg-white);
@@ -339,4 +275,58 @@
 
 .cr-btn-secondary:hover {
   background-color: var(--color-bg-page);
+}
+
+.cr-emergency-banner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: var(--radius-md);
+  padding: 16px 24px;
+  margin: 0 auto 32px;
+  text-align: left;
+}
+
+.cr-emergency-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cr-emergency-title {
+  color: #991B1B;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.cr-emergency-desc {
+  color: #DC2626;
+  font-size: 14px;
+  margin: 0;
+}
+
+.cr-emergency-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #DC2626;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.cr-emergency-btn:hover {
+  background-color: #B91C1C;
+}
+
+.cr-sidebar {
+  display: none;
 }
