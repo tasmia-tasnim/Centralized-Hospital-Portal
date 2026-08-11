@@ -39,11 +39,11 @@ export default function Navbar() {
               </svg>
             </span>
             <div className="navbar-dropdown-menu">
-              <div className="navbar-dropdown-item">Cardiology</div>
-              <div className="navbar-dropdown-item">Neurology</div>
-              <div className="navbar-dropdown-item">Orthopedics</div>
-              <div className="navbar-dropdown-item">Pediatrics</div>
-              <div className="navbar-dropdown-item">Oncology</div>
+              <Link to="/book-appointment?dept=cardiology" className="navbar-dropdown-item">Cardiology</Link>
+              <Link to="/book-appointment?dept=neurology" className="navbar-dropdown-item">Neurology</Link>
+              <Link to="/book-appointment?dept=orthopedics" className="navbar-dropdown-item">Orthopedics</Link>
+              <Link to="/book-appointment?dept=pediatrics" className="navbar-dropdown-item">Pediatrics</Link>
+              <Link to="/book-appointment?dept=oncology" className="navbar-dropdown-item">Oncology</Link>
             </div>
           </div>
           <div className="navbar-dropdown group">

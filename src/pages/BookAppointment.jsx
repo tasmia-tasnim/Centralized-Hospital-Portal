@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import './BookAppointment.css'
 import './BookAppointment.css'
@@ -6,6 +7,60 @@ import './BookAppointment.css'
 export default function BookAppointment() {
   const [step, setStep] = useState(1) // Start at step 1 based on design
   const { lang } = useLanguage()
+  const [searchParams] = useSearchParams()
+  const deptQuery = searchParams.get('dept')
+
+  const doctors = [
+    {
+      id: 1,
+      dept: 'cardiology',
+      deptName: lang === 'bn' ? 'সিনিয়র কার্ডিওলজিস্ট' : 'SENIOR CARDIOLOGIST',
+      name: lang === 'bn' ? 'ডা. এভলিন রস' : 'Dr. Evelyn Ross',
+      exp: lang === 'bn' ? '১৪ বছরের অভিজ্ঞতা' : '14 Years Experience',
+      loc: lang === 'bn' ? 'ইস্ট উইং, স্যুট ৪০২' : 'East Wing, Suite 402',
+      rating: lang === 'bn' ? '৪.৯ (২৪০ রিভিউ)' : '4.9 (240 reviews)'
+    },
+    {
+      id: 2,
+      dept: 'pediatrics',
+      deptName: lang === 'bn' ? 'শিশু বিশেষজ্ঞ' : 'PEDIATRIC SPECIALIST',
+      name: lang === 'bn' ? 'ডা. মার্কাস ভ্যান্স' : 'Dr. Marcus Vance',
+      exp: lang === 'bn' ? '১০ বছরের অভিজ্ঞতা' : '10 Years Experience',
+      loc: lang === 'bn' ? 'ওয়েস্ট উইং, স্যুট ১০৫' : 'West Wing, Suite 105',
+      rating: lang === 'bn' ? '৪.৮ (১৯০ রিভিউ)' : '4.8 (190 reviews)'
+    },
+    {
+      id: 3,
+      dept: 'orthopedics',
+      deptName: lang === 'bn' ? 'অর্থোপেডিক সার্জন' : 'ORTHOPEDIC SURGEON',
+      name: lang === 'bn' ? 'ডা. সারাহ জেনকিন্স' : 'Dr. Sarah Jenkins',
+      exp: lang === 'bn' ? '১২ বছরের অভিজ্ঞতা' : '12 Years Experience',
+      loc: lang === 'bn' ? 'সেন্ট্রাল প্যাভিলিয়ন, স্যুট ৩১০' : 'Central Pavilion, Suite 310',
+      rating: lang === 'bn' ? '৪.৯ (৩১০ রিভিউ)' : '4.9 (310 reviews)'
+    },
+    {
+      id: 4,
+      dept: 'neurology',
+      deptName: lang === 'bn' ? 'নিউরোলজিস্ট' : 'NEUROLOGIST',
+      name: lang === 'bn' ? 'ডা. রবার্ট পিয়ার্স' : 'Dr. Robert Pierce',
+      exp: lang === 'bn' ? '১৫ বছরের অভিজ্ঞতা' : '15 Years Experience',
+      loc: lang === 'bn' ? 'নর্থ উইং, স্যুট ২০২' : 'North Wing, Suite 202',
+      rating: lang === 'bn' ? '৪.৭ (১৮০ রিভিউ)' : '4.7 (180 reviews)'
+    },
+    {
+      id: 5,
+      dept: 'oncology',
+      deptName: lang === 'bn' ? 'অনকোলজিস্ট' : 'ONCOLOGIST',
+      name: lang === 'bn' ? 'ডা. এলিস মর্গান' : 'Dr. Alice Morgan',
+      exp: lang === 'bn' ? '১১ বছরের অভিজ্ঞতা' : '11 Years Experience',
+      loc: lang === 'bn' ? 'সাউথ উইং, স্যুট ৫০১' : 'South Wing, Suite 501',
+      rating: lang === 'bn' ? '৪.৯ (২২০ রিভিউ)' : '4.9 (220 reviews)'
+    }
+  ]
+
+  const filteredDoctors = deptQuery
+    ? doctors.filter(doc => doc.dept === deptQuery.toLowerCase())
+    : doctors
 
   // View 0: Find Doctor (Step 1)
   const renderFindDoctor = () => (
@@ -46,89 +101,40 @@ export default function BookAppointment() {
         </div>
 
         <div className="ba-doctors-grid">
-          {/* Doctor 1 */}
-          <div className="ba-doc-grid-card">
-            <div className="ba-doc-grid-photo"></div>
-            <div className="ba-doc-grid-info">
-              <p className="ba-doc-grid-dept">{lang === 'bn' ? 'সিনিয়র কার্ডিওলজিস্ট' : 'SENIOR CARDIOLOGIST'}</p>
-              <h3 className="ba-doc-grid-name">{lang === 'bn' ? 'ডা. এভলিন রস' : 'Dr. Evelyn Ross'}</h3>
-              
-              <div className="ba-doc-grid-meta">
-                <div className="ba-meta-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-                  <span>{lang === 'bn' ? '১৪ বছরের অভিজ্ঞতা' : '14 Years Experience'}</span>
-                </div>
-                <div className="ba-meta-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>{lang === 'bn' ? 'ইস্ট উইং, স্যুট ৪০২' : 'East Wing, Suite 402'}</span>
-                </div>
-                <div className="ba-meta-row ba-rating-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <span>{lang === 'bn' ? '৪.৯ (২৪০ রিভিউ)' : '4.9 (240 reviews)'}</span>
-                </div>
-              </div>
-              
-              <button className="ba-view-profile-btn" onClick={() => setStep(2)}>
-                {lang === 'bn' ? 'প্রোফাইল দেখুন ও বুক করুন →' : 'View Profile & Book →'}
-              </button>
-            </div>
-          </div>
-
-          {/* Doctor 2 */}
-          <div className="ba-doc-grid-card">
-            <div className="ba-doc-grid-photo"></div>
-            <div className="ba-doc-grid-info">
-              <p className="ba-doc-grid-dept">{lang === 'bn' ? 'শিশু বিশেষজ্ঞ' : 'PEDIATRIC SPECIALIST'}</p>
-              <h3 className="ba-doc-grid-name">{lang === 'bn' ? 'ডা. মার্কাস ভ্যান্স' : 'Dr. Marcus Vance'}</h3>
-              
-              <div className="ba-doc-grid-meta">
-                <div className="ba-meta-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-                  <span>{lang === 'bn' ? '১০ বছরের অভিজ্ঞতা' : '10 Years Experience'}</span>
-                </div>
-                <div className="ba-meta-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>{lang === 'bn' ? 'ওয়েস্ট উইং, স্যুট ১০৫' : 'West Wing, Suite 105'}</span>
-                </div>
-                <div className="ba-meta-row ba-rating-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <span>{lang === 'bn' ? '৪.৮ (১৯০ রিভিউ)' : '4.8 (190 reviews)'}</span>
+          {filteredDoctors.length > 0 ? (
+            filteredDoctors.map(doc => (
+              <div className="ba-doc-grid-card" key={doc.id}>
+                <div className="ba-doc-grid-photo"></div>
+                <div className="ba-doc-grid-info">
+                  <p className="ba-doc-grid-dept">{doc.deptName}</p>
+                  <h3 className="ba-doc-grid-name">{doc.name}</h3>
+                  
+                  <div className="ba-doc-grid-meta">
+                    <div className="ba-meta-row">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                      <span>{doc.exp}</span>
+                    </div>
+                    <div className="ba-meta-row">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span>{doc.loc}</span>
+                    </div>
+                    <div className="ba-meta-row ba-rating-row">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      <span>{doc.rating}</span>
+                    </div>
+                  </div>
+                  
+                  <button className="ba-view-profile-btn" onClick={() => setStep(2)}>
+                    {lang === 'bn' ? 'প্রোফাইল দেখুন ও বুক করুন →' : 'View Profile & Book →'}
+                  </button>
                 </div>
               </div>
-              
-              <button className="ba-view-profile-btn" onClick={() => setStep(2)}>
-                {lang === 'bn' ? 'প্রোফাইল দেখুন ও বুক করুন →' : 'View Profile & Book →'}
-              </button>
+            ))
+          ) : (
+            <div className="ba-no-doctors" style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center', color: '#64748B' }}>
+              {lang === 'bn' ? 'এই বিভাগে কোনো ডাক্তার পাওয়া যায়নি।' : 'No doctors found in this department.'}
             </div>
-          </div>
-
-          {/* Doctor 3 */}
-          <div className="ba-doc-grid-card">
-            <div className="ba-doc-grid-photo"></div>
-            <div className="ba-doc-grid-info">
-              <p className="ba-doc-grid-dept">{lang === 'bn' ? 'অর্থোপেডিক সার্জন' : 'ORTHOPEDIC SURGEON'}</p>
-              <h3 className="ba-doc-grid-name">{lang === 'bn' ? 'ডা. সারাহ জেনকিন্স' : 'Dr. Sarah Jenkins'}</h3>
-              
-              <div className="ba-doc-grid-meta">
-                <div className="ba-meta-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-                  <span>{lang === 'bn' ? '১২ বছরের অভিজ্ঞতা' : '12 Years Experience'}</span>
-                </div>
-                <div className="ba-meta-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>{lang === 'bn' ? 'সেন্ট্রাল প্যাভিলিয়ন, স্যুট ৩১০' : 'Central Pavilion, Suite 310'}</span>
-                </div>
-                <div className="ba-meta-row ba-rating-row">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <span>{lang === 'bn' ? '৪.৯ (৩১০ রিভিউ)' : '4.9 (310 reviews)'}</span>
-                </div>
-              </div>
-              
-              <button className="ba-view-profile-btn" onClick={() => setStep(2)}>
-                {lang === 'bn' ? 'প্রোফাইল দেখুন ও বুক করুন →' : 'View Profile & Book →'}
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
