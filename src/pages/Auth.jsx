@@ -54,7 +54,7 @@ export default function Auth() {
             {isLogin ? t('welcomeBack') : t('createAccount')}
           </h1>
           <p className="auth-subtitle">
-            {isLogin ? t('signInAccount') : t('joinMeditap')}
+            {isLogin ? t('signInAccount') : t('joinCentralHospital')}
           </p>
         </div>
 

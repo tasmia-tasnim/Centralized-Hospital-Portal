@@ -101,9 +101,9 @@ export const translations = {
 
     // Auth
     welcomeBack: 'Welcome Back',
-    signInAccount: 'Sign in to your MediTap account',
+    signInAccount: 'Sign in to your Central Hospital account',
     createAccount: 'Create an Account',
-    joinMeditap: 'Join MediTap today',
+    joinCentralHospital: 'Join Central Hospital today',
     emailAddress: 'Email Address',
     enterEmail: 'Enter your email',
     password: 'Password',
@@ -257,9 +257,9 @@ export const translations = {
 
     // Auth
     welcomeBack: 'স্বাগত ফিরে',
-    signInAccount: 'আপনার মেডিট্যাপ অ্যাকাউন্টে সাইন ইন করুন',
-    createAccount: 'একটি অ্যাকাউন্ট তৈরি করুন',
-    joinMeditap: 'আজই মেডিট্যাপে যোগ দিন',
+    signInAccount: 'আপনার সেন্ট্রাল হাসপাতাল অ্যাকাউন্টে সাইন ইন করুন',
+    createAccount: 'অ্যাকাউন্ট তৈরি করুন',
+    joinCentralHospital: 'আজই সেন্ট্রাল হাসপাতালে যোগ দিন',
     emailAddress: 'ইমেইল ঠিকানা',
     enterEmail: 'আপনার ইমেইল লিখুন',
     password: 'পাসওয়ার্ড',
