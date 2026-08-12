@@ -819,3 +819,771 @@
   background-color: #E8F0EC;
 }
 
+/* Reschedule & Manage Appointment Styling */
+.ba-reschedule-top-card {
+  background: var(--color-bg-white);
+  border: 1px solid #CCFBF1;
+  border-radius: var(--radius-lg);
+  padding: 24px 32px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.06);
+}
+
+.ba-reschedule-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--color-bg-mint);
+  color: var(--color-primary-dark);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.ba-existing-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.ba-existing-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.ba-existing-select {
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  background-color: #F8FAFC;
+  outline: none;
+  cursor: pointer;
+}
+
+.ba-existing-meta-pills {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ba-pill {
+  font-size: 13px;
+  background-color: #F1F5F9;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: var(--color-text-secondary);
+}
+
+.ba-pill.highlight {
+  background-color: #FEF3C7;
+  color: #92400E;
+  font-weight: 600;
+}
+
+.ba-reschedule-summary-box {
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.ba-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ba-summary-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #166534;
+}
+
+.ba-summary-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #14532D;
+}
+
+.ba-summary-arrow {
+  font-size: 18px;
+  font-weight: 800;
+  color: #16A34A;
+}
+
+/* Side by side reschedule comparison card in Step 4 */
+.ba-reschedule-confirm-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-top: 16px;
+}
+
+.ba-reschedule-side {
+  flex: 1;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ba-reschedule-side.old-side {
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+}
+
+.ba-reschedule-side.new-side {
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+}
+
+.ba-side-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #991B1B;
+  letter-spacing: 0.5px;
+}
+
+.ba-side-badge.new {
+  color: #166534;
+}
+
+.ba-reschedule-side h4 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.ba-reschedule-side p {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.ba-ref-text {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.ba-reschedule-arrow-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-bg-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Cancel Flow Styling */
+.ba-view-cancel {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.ba-cancel-card {
+  background: var(--color-bg-white);
+  border: 1px solid #FECACA;
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.06);
+}
+
+.ba-cancel-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ba-cancel-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #FEE2E2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ba-cancel-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: #991B1B;
+  margin-bottom: 4px;
+}
+
+.ba-cancel-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.ba-cancel-details-box {
+  background-color: #FFF5F5;
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ba-cancel-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ba-detail-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.ba-detail-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.ba-cancel-policy-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #FEF3C7;
+  border: 1px solid #FDE68A;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: #92400E;
+  margin-bottom: 28px;
+}
+
+.ba-cancel-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.ba-cancel-confirm-btn {
+  flex: 1;
+  padding: 14px;
+  background-color: #DC2626;
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ba-cancel-confirm-btn:hover {
+  background-color: #B91C1C;
+}
+
+.ba-cancel-back-btn {
+  padding: 14px 24px;
+  background-color: #F1F5F9;
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Confirmation Ticket / Slip View */
+.ba-confirmation-view {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.ba-success-card {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--color-border);
+}
+
+.ba-success-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px auto;
+}
+
+.ba-success-icon-wrap.green-glow {
+  background-color: #E6F4F1;
+  box-shadow: 0 0 0 12px rgba(13, 148, 136, 0.1);
+}
+
+.ba-success-icon-wrap.red-glow {
+  background-color: #FEE2E2;
+  box-shadow: 0 0 0 12px rgba(220, 38, 38, 0.1);
+}
+
+.ba-success-title {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  margin-bottom: 8px;
+}
+
+.ba-success-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.ba-ticket-card {
+  background: #FAFAFA;
+  border: 2px dashed #E2E8F0;
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: left;
+  margin-bottom: 32px;
+}
+
+.ba-ticket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E2E8F0;
+  margin-bottom: 20px;
+}
+
+.ba-ticket-hospital {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--color-primary-dark);
+}
+
+.ba-ticket-status-tag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+.ba-ticket-status-tag.active {
+  background-color: #DCFCE7;
+  color: #15803D;
+}
+
+.ba-ticket-status-tag.rescheduled {
+  background-color: #CCFBF1;
+  color: #0F766E;
+}
+
+.ba-ticket-status-tag.red {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.ba-ticket-body {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 24px;
+  margin-bottom: 24px;
+}
+
+.ba-ticket-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ba-ticket-field span {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ba-ticket-field strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.ba-ticket-barcode {
+  border-top: 1px solid #E2E8F0;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ba-barcode-lines {
+  width: 180px;
+  height: 32px;
+  background: repeating-linear-gradient(
+    90deg,
+    #1E293B,
+    #1E293B 3px,
+    transparent 3px,
+    transparent 6px
+  );
+}
+
+.ba-barcode-num {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  letter-spacing: 2px;
+}
+
+.ba-success-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.ba-download-slip-btn {
+  flex: 1;
+  padding: 14px;
+  background-color: var(--color-primary-dark);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+
+.ba-download-slip-btn:hover {
+  opacity: 0.9;
+}
+
+.ba-back-home-btn {
+  padding: 14px 20px;
+  background-color: var(--color-bg-page);
+  color: var(--color-primary-dark);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Patient Ratings & Reviews Section */
+.ba-reviews-section {
+  margin-top: 48px;
+  padding-top: 40px;
+  border-top: 1px solid var(--color-border);
+}
+
+.ba-reviews-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ba-reviews-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 4px;
+}
+
+.ba-reviews-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.ba-reviews-score-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.ba-score-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+}
+
+.ba-score-count {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.ba-review-form-card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+.ba-form-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ba-verified-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-bg-mint);
+  color: var(--color-primary-dark);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ba-unlock-note {
+  font-size: 12px;
+  color: #0D9488;
+  font-weight: 600;
+}
+
+.ba-rating-form-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 20px;
+}
+
+.ba-review-success-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #DCFCE7;
+  border: 1px solid #86EFAC;
+  color: #15803D;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.ba-star-input-group {
+  margin-bottom: 20px;
+}
+
+.ba-star-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ba-star-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.ba-star-btn:hover {
+  transform: scale(1.15);
+}
+
+.ba-rating-score-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-left: 12px;
+}
+
+.ba-submit-review-btn {
+  padding: 12px 24px;
+  background-color: var(--color-primary-dark);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.ba-submit-review-btn:hover {
+  opacity: 0.9;
+}
+
+/* Locked Rating Notice */
+.ba-review-locked-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background-color: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.ba-locked-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #FEF3C7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ba-locked-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: #92400E;
+  margin-bottom: 4px;
+}
+
+.ba-locked-desc {
+  font-size: 13px;
+  color: #B45309;
+  line-height: 1.5;
+}
+
+/* Reviews List */
+.ba-reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ba-reviews-list-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.ba-review-card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+}
+
+.ba-review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ba-reviewer-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ba-reviewer-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: var(--color-primary-dark);
+  color: #FFFFFF;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.ba-reviewer-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.ba-reviewer-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.ba-verified-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0D9488;
+}
+
+.ba-review-date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.ba-review-stars-row {
+  display: flex;
+  gap: 3px;
+}
+
+.ba-review-comment {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.ba-no-reviews {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+
+
+
