@@ -1,13 +1,22 @@
-import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import { useAuth } from '../context/AuthContext'
 import './BookAppointment.css'
 
 export default function BookAppointment() {
   const [step, setStep] = useState(1)
   const { lang } = useLanguage()
+  const { user, guestLogin } = useAuth()
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const deptQuery = searchParams.get('dept')
+  const doctorQuery = searchParams.get('doctor')
+  const actionQuery = searchParams.get('action')
+
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [guestPhone, setGuestPhone] = useState('')
+  const [guestError, setGuestError] = useState('')
 
   const doctors = [
     {
@@ -134,6 +143,37 @@ export default function BookAppointment() {
     ? doctors.filter(doc => doc.dept === deptQuery.toLowerCase())
     : doctors
 
+  // Handle URL query params for direct doctor navigation
+  useEffect(() => {
+    if (doctorQuery) {
+      const doc = doctors.find(d => d.id === parseInt(doctorQuery))
+      if (doc) {
+        setSelectedDoctor(doc)
+        const appts = sampleExistingAppointments[doc.id] || sampleExistingAppointments[1]
+        setSelectedExistingAppt(appts[0])
+        if (actionQuery === 'book') {
+          if (!user) {
+            setShowAuthModal(true)
+          } else {
+            setBookingMode('book')
+            setStep(3)
+          }
+        } else {
+          setStep(2)
+        }
+      }
+    }
+  }, [doctorQuery, actionQuery, user])
+
+  // Sync user info with patient form when user logs in or is guest
+  useEffect(() => {
+    if (user) {
+      if (user.name) setPatientName(user.name)
+      if (user.phone) setPatientPhone(user.phone)
+      if (user.email) setPatientEmail(user.email)
+    }
+  }, [user])
+
   // Helper to compute dynamic rating average & count
   const getDoctorRatingInfo = (docId) => {
     const reviews = doctorReviews[docId] || []
@@ -157,6 +197,10 @@ export default function BookAppointment() {
   }
 
   const handleStartBooking = () => {
+    if (!user) {
+      setShowAuthModal(true)
+      return
+    }
     setBookingMode('book')
     setIsSubmitted(false)
     setIsCanceled(false)
@@ -164,6 +208,10 @@ export default function BookAppointment() {
   }
 
   const handleStartReschedule = () => {
+    if (!user) {
+      setShowAuthModal(true)
+      return
+    }
     setBookingMode('reschedule')
     setIsSubmitted(false)
     setIsCanceled(false)
@@ -171,7 +219,28 @@ export default function BookAppointment() {
   }
 
   const handleStartCancel = () => {
+    if (!user) {
+      setShowAuthModal(true)
+      return
+    }
     setBookingMode('cancel')
+    setIsSubmitted(false)
+    setIsCanceled(false)
+    setStep(3)
+  }
+
+  const handleGuestSubmit = (e) => {
+    e.preventDefault()
+    if (!guestPhone.trim() || guestPhone.trim().length < 6) {
+      setGuestError(lang === 'bn' ? 'অনুগ্রহ করে সঠিক ফোন নম্বর প্রদান করুন' : 'Please provide a valid phone number')
+      return
+    }
+    guestLogin(guestPhone.trim())
+    setPatientPhone(guestPhone.trim())
+    setPatientName(lang === 'bn' ? 'অতিথি রোগী' : 'Guest Patient')
+    setShowAuthModal(false)
+    setGuestError('')
+    setBookingMode('book')
     setIsSubmitted(false)
     setIsCanceled(false)
     setStep(3)
@@ -1126,6 +1195,95 @@ export default function BookAppointment() {
           </>
         )}
       </div>
+
+      {/* Guest / Sign-In / Sign-Up Auth Gate Modal */}
+      {showAuthModal && (
+        <div className="ba-auth-modal-overlay" onClick={() => setShowAuthModal(false)}>
+          <div className="ba-auth-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ba-auth-modal-header">
+              <div className="ba-auth-modal-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <div>
+                <h3 className="ba-auth-modal-title">
+                  {lang === 'bn' ? 'অ্যাপয়েন্টমেন্ট বুকিংয়ের জন্য বিকল্প বেছে নিন' : 'Continue Booking Appointment'}
+                </h3>
+                <p className="ba-auth-modal-subtitle">
+                  {lang === 'bn' ? 'আপনি অতিথি হিসেবে দ্রুত বুক করতে পারেন অথবা অ্যাকাউন্টে সাইন ইন করতে পারেন।' : 'Sign in, register a new account, or book instantly as a guest.'}
+                </p>
+              </div>
+              <button className="ba-modal-close" onClick={() => setShowAuthModal(false)}>✕</button>
+            </div>
+
+            <div className="ba-auth-modal-body">
+              {/* Option 1: Guest Checkout (Phone Only) */}
+              <div className="ba-auth-option-card guest-option">
+                <div className="ba-option-badge">{lang === 'bn' ? 'সবচেয়ে দ্রুত' : 'Fastest'}</div>
+                <h4 className="ba-option-title">
+                  {lang === 'bn' ? 'অতিথি হিসেবে বুক করুন (শুধু ফোন নম্বর)' : 'Continue as Guest (Phone Only)'}
+                </h4>
+                <p className="ba-option-desc">
+                  {lang === 'bn' 
+                    ? 'কোনো পাসওয়ার্ড বা এনআইডি লাগবে না। শুধুমাত্র মোবাইল নম্বর দিয়ে দ্রুত বুকিং সম্পন্ন করুন।' 
+                    : 'No password or NID required. Just enter your phone number to proceed immediately.'}
+                </p>
+                <form onSubmit={handleGuestSubmit} className="ba-guest-form">
+                  {guestError && <div className="ba-guest-error">{guestError}</div>}
+                  <div className="ba-guest-input-row">
+                    <input
+                      type="tel"
+                      className="ba-guest-input"
+                      placeholder={lang === 'bn' ? 'আপনার মোবাইল নম্বর লিখুন (যেমন: 017xxxxxxxx)' : 'Enter your mobile number (e.g. 017xxxxxxxx)'}
+                      value={guestPhone}
+                      onChange={(e) => setGuestPhone(e.target.value)}
+                      required
+                    />
+                    <button type="submit" className="ba-guest-submit-btn">
+                      {lang === 'bn' ? 'এগিয়ে যান →' : 'Continue →'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div className="ba-auth-divider">
+                <span>{lang === 'bn' ? 'অথবা' : 'OR'}</span>
+              </div>
+
+              {/* Option 2 & 3: Sign In or Sign Up */}
+              <div className="ba-auth-actions-row">
+                <button 
+                  className="ba-auth-btn-signin"
+                  onClick={() => navigate('/auth?mode=login')}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                    <polyline points="10 17 15 12 10 7"/>
+                    <line x1="15" y1="12" x2="3" y2="12"/>
+                  </svg>
+                  {lang === 'bn' ? 'সাইন ইন করুন' : 'Sign In with Account'}
+                </button>
+                <button 
+                  className="ba-auth-btn-signup"
+                  onClick={() => navigate('/auth?mode=signup')}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="8.5" cy="7" r="4"/>
+                    <line x1="20" y1="8" x2="20" y2="14"/>
+                    <line x1="23" y1="11" x2="17" y2="11"/>
+                  </svg>
+                  {lang === 'bn' ? 'নতুন অ্যাকাউন্ট তৈরি করুন' : 'Create Account'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -2,13 +2,14 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import TopBar from './components/TopBar'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import Chatbot from './components/Chatbot'
 import Home from './pages/Home'
+import FindDoctor from './pages/FindDoctor'
 import BloodBank from './pages/BloodBank'
 import BloodDonorNetwork from './pages/BloodDonorNetwork'
 import BedAvailability from './pages/BedAvailability'
 import MedicalRecord from './pages/MedicalRecord'
 import PricingDirectory from './pages/PricingDirectory'
-import CriticalReport from './pages/CriticalReport'
 import BookAppointment from './pages/BookAppointment'
 import VaccinationPlanner from './pages/VaccinationPlanner'
 import VaccineSchedule from './pages/VaccineSchedule'
@@ -36,20 +37,24 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/find-doctor" element={<FindDoctor />} />
           <Route path="/blood-bank" element={<BloodBank />} />
           <Route path="/blood-donor-network" element={<BloodDonorNetwork />} />
           <Route path="/bed-availability" element={<BedAvailability />} />
           <Route path="/medical-record" element={<ProtectedRoute><MedicalRecord /></ProtectedRoute>} />
           <Route path="/pricing" element={<PricingDirectory />} />
-          <Route path="/critical-report" element={<CriticalReport />} />
-          <Route path="/book-appointment" element={<ProtectedRoute><BookAppointment /></ProtectedRoute>} />
+          <Route path="/book-appointment" element={<BookAppointment />} />
           <Route path="/vaccination-planner" element={<VaccinationPlanner />} />
           <Route path="/vaccine-schedule/:vaccineId" element={<VaccineSchedule />} />
           <Route path="/symptom-checker" element={<SymptomChecker />} />
           <Route path="/ambulance-service" element={<AmbulanceService />} />
+          {/* Fallback to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       <Footer />
+      {/* Global floating chatbot */}
+      <Chatbot />
     </div>
   )
 }

@@ -8,15 +8,21 @@ export default function Auth() {
   const [searchParams, setSearchParams] = useSearchParams()
   const mode = searchParams.get('mode') || 'login'
   const isLogin = mode === 'login'
-  const { t } = useLanguage()
-  const { login } = useAuth()
+  const { t, lang } = useLanguage()
+  const { login, signup } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   const [role, setRole] = useState('patient')
   const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
+  
+  // Form fields
+  const [identifier, setIdentifier] = useState('') // Phone or Email for Login
   const [password, setPassword] = useState('')
+  const [fullName, setFullName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [nid, setNid] = useState('')
   const [error, setError] = useState('')
 
   const toggleMode = () => {
@@ -29,19 +35,45 @@ export default function Auth() {
     setError('')
     
     if (isLogin) {
-      const result = login(email, password)
+      if (!identifier.trim()) {
+        setError(lang === 'bn' ? 'ফোন নম্বর বা ইমেইল লিখুন' : 'Please enter your phone number or email')
+        return
+      }
+      if (!password) {
+        setError(lang === 'bn' ? 'পাসওয়ার্ড লিখুন' : 'Please enter your password')
+        return
+      }
+
+      const result = login(identifier.trim(), password)
       if (result.success) {
-        // redirect to requested page or home
         const from = location.state?.from?.pathname || '/'
         navigate(from, { replace: true })
       } else {
         setError(result.message)
       }
     } else {
-      // Dummy signup
-      const result = login('1', '1') // Auto login as patient on signup for demo
+      // Patient Sign up Validations
+      if (!fullName.trim()) {
+        setError(lang === 'bn' ? 'পূর্ণ নাম আবশ্যক' : 'Full name is required')
+        return
+      }
+      if (!phone.trim()) {
+        setError(lang === 'bn' ? 'ফোন নম্বর প্রাথমিক যোগাযোগ হিসেবে আবশ্যক' : 'Phone number is required as primary contact')
+        return
+      }
+      if (role === 'patient' && !nid.trim()) {
+        setError(lang === 'bn' ? 'জাতীয় পরিচয়পত্র (NID) অথবা জন্ম নিবন্ধন নম্বর আবশ্যক' : 'NID or Birth Certificate Number is mandatory for registration')
+        return
+      }
+      if (!password || password.length < 4) {
+        setError(lang === 'bn' ? 'পাসওয়ার্ড কমপক্ষে ৪ অক্ষরের হতে হবে' : 'Password must be at least 4 characters')
+        return
+      }
+
+      const result = signup({ fullName, phone, email, nid })
       if (result.success) {
-        navigate('/')
+        const from = location.state?.from?.pathname || '/'
+        navigate(from, { replace: true })
       }
     }
   }
@@ -54,12 +86,15 @@ export default function Auth() {
             {isLogin ? t('welcomeBack') : t('createAccount')}
           </h1>
           <p className="auth-subtitle">
-            {isLogin ? t('signInAccount') : t('joinCentralHospital')}
+            {isLogin 
+              ? (lang === 'bn' ? 'আপনার অ্যাকাউন্টে সাইন ইন করুন' : 'Sign in using your phone number or email') 
+              : (lang === 'bn' ? 'নতুন রোগী নিবন্ধন করুন' : 'Register with your verified information')}
           </p>
         </div>
 
         <div className="auth-role-tabs">
           <button
+            type="button"
             className={`auth-role-tab ${role === 'patient' ? 'active' : ''}`}
             onClick={() => setRole('patient')}
           >
@@ -70,6 +105,7 @@ export default function Auth() {
             {t('rolePatient')}
           </button>
           <button
+            type="button"
             className={`auth-role-tab ${role === 'doctor' ? 'active' : ''}`}
             onClick={() => setRole('doctor')}
           >
@@ -79,6 +115,7 @@ export default function Auth() {
             {t('roleDoctor')}
           </button>
           <button
+            type="button"
             className={`auth-role-tab ${role === 'admin' ? 'active' : ''}`}
             onClick={() => setRole('admin')}
           >
@@ -90,11 +127,34 @@ export default function Auth() {
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
-          
-          {error && <div className="auth-error-msg" style={{color: '#DC2626', backgroundColor: '#FEF2F2', padding: '12px', borderRadius: '4px', marginBottom: '16px', fontSize: '14px', border: '1px solid #FECACA'}}>{error}</div>}
+          {error && <div className="auth-error-msg">{error}</div>}
 
-          {/* Sign-up only fields */}
-          {!isLogin && (
+          {/* SIGN IN: Phone or Email (Primary Contact / Optional Email) */}
+          {isLogin ? (
+            <div className="auth-form-group">
+              <label className="auth-label">
+                {lang === 'bn' ? 'ফোন নম্বর অথবা ইমেইল' : 'Phone Number or Email'}
+              </label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  className="auth-input" 
+                  placeholder={lang === 'bn' ? 'যেমন: 017xxxxxxxx বা name@mail.com' : 'e.g. 017xxxxxxxx or name@mail.com'}
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                />
+              </div>
+              <span className="auth-hint">
+                {lang === 'bn' ? 'ডেমো লগইন: ১ (রোগী) অথবা ২ (ডাক্তার)' : 'Demo login: 1 (Patient) or 2 (Doctor)'}
+              </span>
+            </div>
+          ) : (
+            /* SIGN UP: Full Name */
             <div className="auth-form-group">
               <label className="auth-label">{t('fullName')}</label>
               <div className="auth-input-wrapper">
@@ -104,44 +164,97 @@ export default function Auth() {
                     <circle cx="12" cy="7" r="4" />
                   </svg>
                 </span>
-                <input type="text" className="auth-input" placeholder={t('enterFullName')} />
+                <input 
+                  type="text" 
+                  className="auth-input" 
+                  placeholder={t('enterFullName')}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
               </div>
             </div>
           )}
 
-          <div className="auth-form-group">
-            <label className="auth-label">{t('emailAddress')}</label>
-            <div className="auth-input-wrapper">
-              <span className="auth-input-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2" />
-                  <line x1="2" y1="10" x2="22" y2="10" />
-                </svg>
-              </span>
-              <input 
-                type="text" 
-                className="auth-input" 
-                placeholder={t('enterEmail')} 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-          </div>
-
+          {/* SIGN UP: Phone Number (PRIMARY CONTACT) */}
           {!isLogin && (
             <div className="auth-form-group">
-              <label className="auth-label">{t('phone')}</label>
+              <label className="auth-label">
+                {lang === 'bn' ? 'মোবাইল নম্বর (প্রাথমিক যোগাযোগ)' : 'Phone Number (Primary Contact)'}
+                <span className="auth-req-badge">*</span>
+              </label>
               <div className="auth-input-wrapper">
                 <span className="auth-input-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
                   </svg>
                 </span>
-                <input type="tel" className="auth-input" placeholder={t('enterPhone')} />
+                <input 
+                  type="tel" 
+                  className="auth-input" 
+                  placeholder={lang === 'bn' ? 'যেমন: 017xxxxxxxx' : 'e.g. 017xxxxxxxx'}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
               </div>
             </div>
           )}
 
+          {/* SIGN UP: Email Address (OPTIONAL) */}
+          {!isLogin && (
+            <div className="auth-form-group">
+              <label className="auth-label">
+                {t('emailAddress')}
+                <span className="auth-optional-badge">{lang === 'bn' ? 'ঐচ্ছিক' : 'Optional'}</span>
+              </label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <line x1="2" y1="10" x2="22" y2="10" />
+                  </svg>
+                </span>
+                <input 
+                  type="email" 
+                  className="auth-input" 
+                  placeholder={lang === 'bn' ? 'ইমেইল (প্রয়োজনীয় নয়)' : 'email@example.com (optional)'}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* SIGN UP: NID / Birth Certificate (MANDATORY) */}
+          {!isLogin && (
+            <div className="auth-form-group">
+              <label className="auth-label">
+                {lang === 'bn' ? 'এনআইডি / জন্ম নিবন্ধন নম্বর' : 'NID / Birth Certificate Number'}
+                <span className="auth-req-badge">*</span>
+              </label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                    <line x1="6" y1="14" x2="10" y2="14"/>
+                    <line x1="14" y1="14" x2="18" y2="14"/>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  className="auth-input" 
+                  placeholder={lang === 'bn' ? '১০, ১৩ অথবা ১৭ সংখ্যার এনআইডি / জন্ম সনদ নম্বর' : '10, 13 or 17-digit NID or Birth Certificate'}
+                  value={nid}
+                  onChange={(e) => setNid(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Password */}
           <div className="auth-form-group">
             <label className="auth-label">{t('password')}</label>
             <div className="auth-input-wrapper">
@@ -154,9 +267,10 @@ export default function Auth() {
               <input 
                 type={showPassword ? 'text' : 'password'} 
                 className="auth-input" 
-                placeholder={t('enterPassword')} 
+                placeholder={isLogin ? (lang === 'bn' ? 'পাসওয়ার্ড লিখুন (ডেমো: ১)' : 'Enter password (demo: 1)') : t('enterPassword')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <button type="button" className="auth-input-icon auth-input-icon-right" onClick={() => setShowPassword(!showPassword)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -166,27 +280,6 @@ export default function Auth() {
               </button>
             </div>
           </div>
-
-          {/* NID field — sign up only */}
-          {!isLogin && (
-            <div className="auth-form-group">
-              <label className="auth-label">
-                {t('nidCard')}
-                <span className="auth-optional-badge">Optional</span>
-              </label>
-              <div className="auth-input-wrapper">
-                <span className="auth-input-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2"/>
-                    <line x1="2" y1="10" x2="22" y2="10"/>
-                    <line x1="6" y1="14" x2="10" y2="14"/>
-                    <line x1="14" y1="14" x2="18" y2="14"/>
-                  </svg>
-                </span>
-                <input type="text" className="auth-input" placeholder={t('enterNid')} />
-              </div>
-            </div>
-          )}
 
           <button type="submit" className="auth-submit-btn">
             {isLogin ? t('signIn') : t('signUp')}
