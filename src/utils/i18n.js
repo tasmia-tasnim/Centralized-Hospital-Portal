@@ -123,6 +123,10 @@ export const translations = {
     rolePatient: 'Patient',
     roleDoctor: 'Doctor',
     roleAdmin: 'Admin',
+    doctorLicense: 'Doctor License Number (BMDC)',
+    enterDoctorLicense: 'Enter BMDC License No (e.g. BMDC-A-12345)',
+    emailOrLicense: 'Email or Doctor License Number',
+    enterEmailOrLicense: 'Enter email or license number',
 
     // Blood Donor Network
     bloodDonorNetworkTitle: 'Blood Donor Network',
@@ -279,6 +283,10 @@ export const translations = {
     rolePatient: 'রোগী',
     roleDoctor: 'ডাক্তার',
     roleAdmin: 'প্রশাসক',
+    doctorLicense: 'ডাক্তার লাইসেন্স নম্বর (বিএমডিসি)',
+    enterDoctorLicense: 'বিএমডিসি লাইসেন্স নম্বর লিখুন (যেমন BMDC-A-১২৩৪৫)',
+    emailOrLicense: 'ইমেইল বা ডাক্তার লাইসেন্স নম্বর',
+    enterEmailOrLicense: 'ইমেইল বা লাইসেন্স নম্বর লিখুন',
 
     // Blood Donor Network
     bloodDonorNetworkTitle: 'রক্তদাতা নেটওয়ার্ক',

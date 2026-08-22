@@ -118,14 +118,27 @@
 }
 
 .vp-card-link {
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 16px;
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  font-size: 14px;
   font-weight: 600;
-  color: var(--color-primary);
-  transition: color 0.2s;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(27, 60, 53, 0.2);
+  margin-top: auto;
+  text-align: center;
 }
 
 .vp-card:hover .vp-card-link {
-  color: var(--color-primary-dark);
+  background-color: var(--color-primary-dark);
+  box-shadow: 0 4px 10px rgba(27, 60, 53, 0.3);
+  color: var(--color-text-white);
 }
 
 .vp-card-others {

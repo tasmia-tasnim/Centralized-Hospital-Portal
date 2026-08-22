@@ -425,6 +425,170 @@
   color: var(--color-text-primary);
 }
 
+/* ===== Confirmation Details Modal Pop-Up ===== */
+.vs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: vs-fadeIn 0.2s ease;
+}
+
+@keyframes vs-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vs-scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.vs-modal {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: vs-scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  text-align: center;
+}
+
+.vs-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: all 0.2s;
+}
+
+.vs-modal-close:hover {
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+.vs-modal-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--color-bg-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.vs-modal-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 6px;
+}
+
+.vs-modal-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+}
+
+.vs-modal-info-box {
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.vs-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  gap: 12px;
+}
+
+.vs-info-label {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.vs-info-val {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-align: right;
+}
+
+.vs-info-val.highlight {
+  color: var(--color-primary);
+}
+
+.vs-info-val.green-text {
+  color: var(--color-primary);
+}
+
+.vs-pay-highlight {
+  border-top: 1px dashed var(--color-border);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.vs-info-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.vs-paid-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-bg-mint);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.vs-modal-done-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s;
+  box-shadow: 0 4px 12px rgba(27, 60, 53, 0.25);
+}
+
+.vs-modal-done-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 720px) {
   .vs-card {
