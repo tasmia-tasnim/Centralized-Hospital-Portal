@@ -67,6 +67,17 @@
   box-shadow: var(--shadow-sm);
 }
 
+.auth-error-msg {
+  color: #DC2626;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .auth-form-group {
   margin-bottom: 24px;
 }

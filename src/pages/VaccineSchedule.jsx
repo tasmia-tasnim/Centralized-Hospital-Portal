@@ -1,27 +1,27 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useLanguage } from '../context/LanguageContext'
 import './VaccineSchedule.css'
 
 export default function VaccineSchedule() {
   const location = useLocation()
   const navigate = useNavigate()
-  const vaccine = location.state?.vaccine || { name: 'Flu Shot', id: 'flu-shot' }
+  const { lang } = useLanguage()
+  const vaccine = location.state?.vaccine || { name: lang === 'bn' ? 'ফ্লু শট' : 'Flu Shot', id: 'flu-shot' }
 
   const [paymentMethod, setPaymentMethod] = useState('pay-later')
   const [advanceMethod, setAdvanceMethod] = useState('card')
   const [showDatePicker, setShowDatePicker] = useState(false)
-  const [selectedDate, setSelectedDate] = useState(null)
-  const [selectedTime, setSelectedTime] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(24)
+  const [selectedTime, setSelectedTime] = useState('10:00 AM')
   const [showConfirmation, setShowConfirmation] = useState(false)
 
   const vaccineName = vaccine.name?.toUpperCase() || 'VACCINE'
 
   // Calendar data for October 2026
   const calendarDays = []
-  // October 2026 starts on Thursday (index 4), so 4 empty slots before
   for (let i = 0; i < 4; i++) calendarDays.push({ day: null, empty: true })
   for (let i = 1; i <= 31; i++) calendarDays.push({ day: i, empty: false })
-  // Fill remaining slots
   const remaining = 7 - (calendarDays.length % 7)
   if (remaining < 7) {
     for (let i = 0; i < remaining; i++) calendarDays.push({ day: null, empty: true })
@@ -33,27 +33,39 @@ export default function VaccineSchedule() {
 
   const handleConfirm = () => {
     setShowConfirmation(true)
-    setTimeout(() => {
-      setShowConfirmation(false)
-      navigate('/vaccination-planner')
-    }, 2500)
   }
+
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false)
+    navigate('/vaccination-planner')
+  }
+
+  // Next dose date calculation (6 months after October 2026 -> April 2027)
+  const bookedDateDisplay = lang === 'bn' 
+    ? `${selectedDate} অক্টোবর, ২০২৬ (${selectedTime})` 
+    : `October ${selectedDate}, 2026 at ${selectedTime}`
+    
+  const nextDoseDisplay = lang === 'bn' 
+    ? `${selectedDate} এপ্রিল, ২০২৭` 
+    : `April ${selectedDate}, 2027`
+
+  const paymentAmount = lang === 'bn' ? '৳১,৫০০' : '৳1,500'
 
   return (
     <div className="vs-page">
       <div className="vs-content">
         {/* Breadcrumb Header */}
         <div className="vs-header">
-          <p className="vs-breadcrumb">{vaccineName} · APPOINTMENT</p>
-          <h1 className="vs-title">Schedule & payment</h1>
-          <p className="vs-subtitle">Pick a slot and how you'd like to pay</p>
+          <p className="vs-breadcrumb">{vaccineName} · {lang === 'bn' ? 'অ্যাপয়েন্টমেন্ট' : 'APPOINTMENT'}</p>
+          <h1 className="vs-title">{lang === 'bn' ? 'সময়সূচী ও পেমেন্ট' : 'Schedule & payment'}</h1>
+          <p className="vs-subtitle">{lang === 'bn' ? 'একটি সময় এবং পেমেন্ট পদ্ধতি নির্ধারণ করুন' : "Pick a slot and how you'd like to pay"}</p>
         </div>
 
         {/* Main Card */}
         <div className="vs-card-area">
           <div className="vs-card">
             {/* Date & Time Section */}
-            <h3 className="vs-question">When would you like your appointment?</h3>
+            <h3 className="vs-question">{lang === 'bn' ? 'আপনি কখন অ্যাপয়েন্টমেন্ট চান?' : 'When would you like your appointment?'}</h3>
 
             <div
               className={`vs-date-picker-trigger ${showDatePicker ? 'active' : ''}`}
@@ -70,10 +82,10 @@ export default function VaccineSchedule() {
               <div className="vs-date-text">
                 <span className="vs-date-main">
                   {selectedDate && selectedTime
-                    ? `October ${selectedDate}, 2026 at ${selectedTime}`
-                    : 'Schedule date and time'}
+                    ? (lang === 'bn' ? `${selectedDate} অক্টোবর, ২০২৬ (${selectedTime})` : `October ${selectedDate}, 2026 at ${selectedTime}`)
+                    : (lang === 'bn' ? 'তারিখ ও সময় বেছে নিন' : 'Schedule date and time')}
                 </span>
-                <span className="vs-date-sub">Pick a slot at Central Hospital</span>
+                <span className="vs-date-sub">{lang === 'bn' ? 'সেন্ট্রাল হাসপাতালে সময় নির্বাচন করুন' : 'Pick a slot at Central Hospital'}</span>
               </div>
               <svg className={`vs-date-chevron ${showDatePicker ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="9 18 15 12 9 6" />
@@ -87,7 +99,7 @@ export default function VaccineSchedule() {
                   {/* Calendar */}
                   <div className="vs-calendar">
                     <div className="vs-cal-header">
-                      <h4 className="vs-cal-month">October 2026</h4>
+                      <h4 className="vs-cal-month">{lang === 'bn' ? 'অক্টোবর ২০২৬' : 'October 2026'}</h4>
                       <div className="vs-cal-nav">
                         <button className="vs-cal-btn" aria-label="Previous month">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
@@ -98,7 +110,7 @@ export default function VaccineSchedule() {
                       </div>
                     </div>
                     <div className="vs-cal-grid">
-                      {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(d => (
+                      {(lang === 'bn' ? ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহঃ', 'শুক্র', 'শনি'] : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']).map(d => (
                         <div key={d} className="vs-cal-day-name">{d}</div>
                       ))}
                       {calendarDays.map((d, i) => (
@@ -116,11 +128,13 @@ export default function VaccineSchedule() {
                   {/* Time Slots */}
                   <div className="vs-time-slots">
                     <h4 className="vs-time-title">
-                      {selectedDate ? `Thu, Oct ${selectedDate}` : 'Select a date first'}
+                      {selectedDate 
+                        ? (lang === 'bn' ? `বৃহস্পতি, ${selectedDate} অক্টো` : `Thu, Oct ${selectedDate}`)
+                        : (lang === 'bn' ? 'প্রথমে একটি তারিখ বেছে নিন' : 'Select a date first')}
                     </h4>
 
                     <div className="vs-slot-group">
-                      <h5 className="vs-slot-period">MORNING</h5>
+                      <h5 className="vs-slot-period">{lang === 'bn' ? 'সকাল' : 'MORNING'}</h5>
                       <div className="vs-slot-grid">
                         {morningSlots.map(slot => (
                           <button
@@ -136,7 +150,7 @@ export default function VaccineSchedule() {
                     </div>
 
                     <div className="vs-slot-group">
-                      <h5 className="vs-slot-period">AFTERNOON</h5>
+                      <h5 className="vs-slot-period">{lang === 'bn' ? 'দুপুর' : 'AFTERNOON'}</h5>
                       <div className="vs-slot-grid">
                         {afternoonSlots.map(slot => (
                           <button
@@ -156,7 +170,7 @@ export default function VaccineSchedule() {
             )}
 
             {/* Payment Section */}
-            <h3 className="vs-question vs-question-pay">How would you like to pay?</h3>
+            <h3 className="vs-question vs-question-pay">{lang === 'bn' ? 'পেমেন্ট কিভাবে করতে চান?' : 'How would you like to pay?'}</h3>
 
             <div className="vs-payment-options">
               <div
@@ -169,7 +183,7 @@ export default function VaccineSchedule() {
                     <line x1="1" y1="10" x2="23" y2="10" />
                   </svg>
                 </div>
-                <span className="vs-pay-label">Pay in advance</span>
+                <span className="vs-pay-label">{lang === 'bn' ? 'অগ্রিম পরিশোধ' : 'Pay in advance'}</span>
               </div>
 
               <div
@@ -182,14 +196,14 @@ export default function VaccineSchedule() {
                     <polyline points="12 6 12 12 16 14" />
                   </svg>
                 </div>
-                <span className="vs-pay-label">Pay later</span>
+                <span className="vs-pay-label">{lang === 'bn' ? 'পরে পরিশোধ (কাউন্টারে)' : 'Pay later'}</span>
               </div>
             </div>
 
             {/* Advance Payment Sub-options */}
             {paymentMethod === 'pay-advance' && (
               <div className="vs-advance-options">
-                <p className="vs-advance-label">Choose how you'd like to pay in advance</p>
+                <p className="vs-advance-label">{lang === 'bn' ? 'অগ্রিম পেমেন্ট মাধ্যম বেছে নিন' : "Choose how you'd like to pay in advance"}</p>
                 <div className="vs-payment-options">
                   <div
                     className={`vs-pay-card ${advanceMethod === 'card' ? 'active' : ''}`}
@@ -201,7 +215,7 @@ export default function VaccineSchedule() {
                         <line x1="1" y1="10" x2="23" y2="10" />
                       </svg>
                     </div>
-                    <span className="vs-pay-label">Card</span>
+                    <span className="vs-pay-label">{lang === 'bn' ? 'কার্ড' : 'Card'}</span>
                   </div>
 
                   <div
@@ -222,20 +236,81 @@ export default function VaccineSchedule() {
 
             {/* Confirm Button */}
             <button className="vs-confirm-btn" onClick={handleConfirm}>
-              Confirm booking
+              {lang === 'bn' ? 'বুকিং নিশ্চিত করুন' : 'Confirm booking'}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Success Toast */}
+      {/* Confirmation Details Modal Pop-Up */}
       {showConfirmation && (
-        <div className="vs-toast">
-          <div className="vs-toast-inner">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <span>Booking confirmed! Redirecting...</span>
+        <div className="vs-modal-overlay" onClick={handleCloseConfirmation}>
+          <div className="vs-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="vs-modal-close"
+              onClick={handleCloseConfirmation}
+              aria-label="Close modal"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <div className="vs-modal-icon-wrap">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+
+            <h3 className="vs-modal-title">{lang === 'bn' ? 'বুকিং সফলভাবে নিশ্চিত করা হয়েছে!' : 'Booking Confirmed!'}</h3>
+            <p className="vs-modal-subtitle">
+              {lang === 'bn' 
+                ? `${vaccine.name} টিকার জন্য আপনার সময়সূচী সফলভাবে সম্পন্ন হয়েছে।`
+                : `Your appointment for ${vaccine.name} has been successfully scheduled.`}
+            </p>
+
+            <div className="vs-modal-info-box">
+              <div className="vs-info-row">
+                <span className="vs-info-label">{lang === 'bn' ? 'টিকার নাম:' : 'Vaccine:'}</span>
+                <strong className="vs-info-val">{vaccine.name}</strong>
+              </div>
+
+              <div className="vs-info-row">
+                <span className="vs-info-label">{lang === 'bn' ? 'বুকিং তারিখ ও সময়:' : 'Appointment Date & Time:'}</span>
+                <strong className="vs-info-val highlight">{bookedDateDisplay}</strong>
+              </div>
+
+              <div className="vs-info-row">
+                <span className="vs-info-label">{lang === 'bn' ? 'পরবর্তী ডোজের সম্ভাব্য তারিখ:' : "Next Dose's Date:"}</span>
+                <strong className="vs-info-val green-text">{nextDoseDisplay}</strong>
+              </div>
+
+              <div className="vs-info-row">
+                <span className="vs-info-label">{lang === 'bn' ? 'পেমেন্ট পদ্ধতি:' : 'Payment Method:'}</span>
+                <strong className="vs-info-val">
+                  {paymentMethod === 'pay-later'
+                    ? (lang === 'bn' ? 'পরে পরিশোধ (হাসপাতাল কাউন্টারে)' : 'Pay Later (at hospital counter)')
+                    : (lang === 'bn' ? `অগ্রিম পরিশোধ (${advanceMethod === 'card' ? 'কার্ড' : 'bKash / Nagad'})` : `Pay in advance (${advanceMethod === 'card' ? 'Card' : 'bKash / Nagad'})`)}
+                </strong>
+              </div>
+
+              {paymentMethod === 'pay-later' ? (
+                <div className="vs-info-row vs-pay-highlight">
+                  <span className="vs-info-label">{lang === 'bn' ? 'পরিশোধের মূল্য (Pay Later):' : 'Payment Value (Pay Later):'}</span>
+                  <strong className="vs-info-price">{paymentAmount}</strong>
+                </div>
+              ) : (
+                <div className="vs-info-row vs-pay-highlight">
+                  <span className="vs-info-label">{lang === 'bn' ? 'পরিশোধিত মূল্য:' : 'Payment Amount:'}</span>
+                  <strong className="vs-info-price">{paymentAmount} <span className="vs-paid-tag">({lang === 'bn' ? 'পরিশোধিত' : 'Paid'})</span></strong>
+                </div>
+              )}
+            </div>
+
+            <button className="vs-modal-done-btn" onClick={handleCloseConfirmation}>
+              {lang === 'bn' ? 'সম্পন্ন এবং ফিরুন' : 'Done & Return'}
+            </button>
           </div>
         </div>
       )}
