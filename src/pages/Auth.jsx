@@ -174,7 +174,7 @@ export default function Auth() {
                 required={!isLogin || role !== 'doctor'}
               />
             </div>
-          )}
+          </div>
 
           {/* Phone Number field — sign up only */}
           {!isLogin && (
