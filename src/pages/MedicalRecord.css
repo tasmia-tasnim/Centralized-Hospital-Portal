@@ -444,7 +444,6 @@
 
 .mr-adm-header {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
   border-bottom: 1px solid #F1F5F9;
   padding-bottom: 16px;

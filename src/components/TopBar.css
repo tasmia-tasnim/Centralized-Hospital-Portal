@@ -3,7 +3,7 @@
   color: var(--color-text-white);
   font-size: 13px;
   font-weight: 400;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
 .topbar-inner {
@@ -13,17 +13,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 40px;
+  min-height: 36px;
 }
 
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .topbar-emergency {
-  font-weight: 500;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .topbar-handle {
@@ -33,29 +36,29 @@
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .lang-switcher {
   display: flex;
   align-items: center;
-  background-color: #F1F4F9; /* matching screenshot pill color */
+  background-color: #F1F4F9;
   border-radius: 9999px;
-  padding: 4px;
+  padding: 3px;
   cursor: pointer;
   color: #4A5568;
 }
 
 .lang-text {
-  padding: 4px 16px;
-  font-size: 13px;
+  padding: 3px 12px;
+  font-size: 12px;
   font-weight: 500;
   border-radius: 9999px;
   transition: all 0.2s;
 }
 
 .lang-text.active {
-  background-color: #0F2942; /* matching screenshot active pill color */
+  background-color: #0F2942;
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -63,7 +66,7 @@
 .lang-sep {
   color: #A0AEC0;
   margin: 0 2px;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .topbar-contact {
@@ -74,4 +77,24 @@
 
 .topbar-contact:hover {
   opacity: 1;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .topbar-inner {
+    padding: 0 16px;
+  }
+  .topbar-handle {
+    display: none;
+  }
+  .topbar-contact {
+    display: none;
+  }
+  .topbar-emergency {
+    font-size: 12px;
+  }
+  .lang-text {
+    padding: 2px 8px;
+    font-size: 11px;
+  }
 }

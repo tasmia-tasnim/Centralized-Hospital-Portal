@@ -1584,6 +1584,294 @@
   font-style: italic;
 }
 
+/* ===== Auth Modal Overlay & Box ===== */
+.ba-auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ba-auth-modal {
+  background: #fff;
+  border-radius: var(--radius-md);
+  max-width: 520px;
+  width: 100%;
+  padding: 28px;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.ba-auth-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.ba-auth-modal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--color-bg-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ba-auth-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 4px;
+}
+
+.ba-auth-modal-subtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.ba-modal-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.ba-modal-close:hover {
+  color: var(--color-text-primary);
+}
+
+.ba-auth-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ba-auth-option-card {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 18px;
+  position: relative;
+}
+
+.ba-auth-option-card.guest-option {
+  border-color: var(--color-primary-light);
+  background: #F8FAF9;
+}
+
+.ba-option-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.ba-option-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 4px;
+}
+
+.ba-option-desc {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.ba-guest-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ba-guest-error {
+  color: #DC2626;
+  font-size: 12px;
+}
+
+.ba-guest-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ba-guest-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  outline: none;
+  background: #fff;
+}
+
+.ba-guest-input:focus {
+  border-color: var(--color-primary);
+}
+
+.ba-guest-submit-btn {
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.ba-guest-submit-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+.ba-auth-divider {
+  text-align: center;
+  position: relative;
+  margin: 4px 0;
+}
+
+.ba-auth-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.ba-auth-divider span {
+  position: relative;
+  background: #fff;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.ba-auth-actions-row {
+  display: flex;
+  gap: 10px;
+}
+
+.ba-auth-btn-signin,
+.ba-auth-btn-signup {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ba-auth-btn-signin {
+  background: transparent;
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.ba-auth-btn-signin:hover {
+  background: var(--color-bg-mint);
+}
+
+.ba-auth-btn-signup {
+  background: var(--color-primary-dark);
+  border: 1.5px solid var(--color-primary-dark);
+  color: #fff;
+}
+
+.ba-auth-btn-signup:hover {
+  opacity: 0.9;
+}
+
+/* ===== Global Mobile Breakpoints for BookAppointment ===== */
+@media (max-width: 768px) {
+  .ba-stepper-container {
+    padding: 20px 16px 12px;
+  }
+  .ba-stepper {
+    gap: 4px;
+  }
+  .ba-step-label {
+    display: none;
+  }
+  .ba-step-line {
+    margin: 0 4px;
+  }
+  .ba-content {
+    padding: 20px 16px 48px;
+  }
+  .ba-schedule-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .ba-actions-grid {
+    grid-template-columns: 1fr;
+  }
+  .ba-summary-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .ba-reschedule-confirm-comparison {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ba-reschedule-arrow-icon {
+    transform: rotate(90deg);
+  }
+  .ba-auth-actions-row {
+    flex-direction: column;
+  }
+  .ba-guest-input-row {
+    flex-direction: column;
+  }
+  .ba-form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .ba-doctors-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
 
 
