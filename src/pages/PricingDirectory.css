@@ -310,3 +310,146 @@
   font-weight: 700;
   color: var(--color-primary);
 }
+
+/* Search Prompt Initial State */
+.pricing-search-prompt-box {
+  background: #ffffff;
+  border: 1.5px dashed #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 48px 24px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.pricing-prompt-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-bg-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.pricing-prompt-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.pricing-prompt-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.pricing-estimate-card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.pricing-estimate-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.pricing-estimate-empty {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.pricing-estimate-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.pricing-estimate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pricing-estimate-row-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-estimate-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.pricing-estimate-item-price {
+  font-size: 12px;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.pricing-estimate-remove {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.pricing-estimate-remove:hover {
+  color: #dc2626;
+}
+
+.pricing-estimate-divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 12px 0;
+}
+
+.pricing-estimate-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pricing-estimate-total-val {
+  color: #1B3C35;
+  font-size: 16px;
+}
+
+.pricing-estimate-clear-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 6px;
+  background: none;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pricing-estimate-clear-btn:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: #fef2f2;
+}

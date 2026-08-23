@@ -1,200 +1,431 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import { DOCTORS_DATA, getLocalizedDoctor } from '../data/doctorsData'
 import './SymptomChecker.css'
 
 export default function SymptomChecker() {
   const navigate = useNavigate()
   const { lang } = useLanguage()
-  
-  const [selectedSymptoms, setSelectedSymptoms] = useState([])
-  const [duration, setDuration] = useState(null)
-  const [severity, setSeverity] = useState(null)
 
-  const toggleSymptom = (symptom) => {
-    setSelectedSymptoms((prev) => 
-      prev.includes(symptom) 
-        ? prev.filter(s => s !== symptom)
-        : [...prev, symptom]
+  // Master Symptoms Catalog
+  const allSymptoms = useMemo(() => [
+    {
+      id: 'headache',
+      nameEn: 'Headache',
+      nameBn: 'মাথাব্যথা',
+      deptKey: 'neurology',
+      isCountable: false
+    },
+    {
+      id: 'vomiting',
+      nameEn: 'Vomiting / Nausea',
+      nameBn: 'বমি বমি ভাব বা বমি',
+      deptKey: 'internal medicine',
+      isCountable: true,
+      countLabelEn: 'Vomiting episodes per day:',
+      countLabelBn: 'প্রতিদিন বমির সংখ্যা:',
+      countOptionsEn: ['1–2 times/day', '3–5 times/day', '6+ times (Severe)'],
+      countOptionsBn: ['১–২ বার/দিন', '৩–৫ বার/দিন', '৬+ বার (তীব্র)']
+    },
+    {
+      id: 'fever',
+      nameEn: 'Fever',
+      nameBn: 'জ্বর',
+      deptKey: 'internal medicine',
+      isCountable: true,
+      countLabelEn: 'Temperature range / Spikes:',
+      countLabelBn: 'জ্বরের মাত্রা / পর্ব:',
+      countOptionsEn: ['Low (99–100°F)', 'Moderate (101–102°F)', 'High (103°F+)'],
+      countOptionsBn: ['মৃদু (৯৯–১০০°F)', 'মাঝারি (১০১–১০২°F)', 'তীব্র (১০৩°F+)']
+    },
+    {
+      id: 'cough',
+      nameEn: 'Cough',
+      nameBn: 'কাশি',
+      deptKey: 'internal medicine',
+      isCountable: true,
+      countLabelEn: 'Cough frequency & fits:',
+      countLabelBn: 'কাশির পুনরাবৃত্তি ও পর্ব:',
+      countOptionsEn: ['Occasional bouts', 'Frequent spells', 'Continuous / Severe'],
+      countOptionsBn: ['মাঝে মাঝে', 'ঘন ঘন পর্ব', 'ক্রমাগত / তীব্র']
+    },
+    {
+      id: 'diarrhea',
+      nameEn: 'Diarrhea / Loose Motion',
+      nameBn: 'পাতলা পায়খানা / ডায়রিয়া',
+      deptKey: 'internal medicine',
+      isCountable: true,
+      countLabelEn: 'Loose stool count per day:',
+      countLabelBn: 'প্রতিদিন পাতলা পায়খানার সংখ্যা:',
+      countOptionsEn: ['2–3 times/day', '4–6 times/day', '7+ times (Critical)'],
+      countOptionsBn: ['২–৩ বার/দিন', '৪–৬ বার/দিন', '৭+ বার (জরুরি)']
+    },
+    {
+      id: 'dizziness',
+      nameEn: 'Dizziness / Vertigo',
+      nameBn: 'মাথা ঘোরানো',
+      deptKey: 'neurology',
+      isCountable: false
+    },
+    {
+      id: 'chest_pain',
+      nameEn: 'Chest Pain / Pressure',
+      nameBn: 'বুকে ব্যথা বা চাপ',
+      deptKey: 'cardiology',
+      isCountable: false
+    },
+    {
+      id: 'joint_pain',
+      nameEn: 'Joint / Knee Pain',
+      nameBn: 'হাঁটু বা গিঁটে ব্যথা',
+      deptKey: 'orthopedics',
+      isCountable: false
+    },
+    {
+      id: 'ear_pain',
+      nameEn: 'Ear Ache / Sinus Pressure',
+      nameBn: 'কানে ব্যথা বা সাইনাস',
+      deptKey: 'ent',
+      isCountable: false
+    },
+    {
+      id: 'shortness_of_breath',
+      nameEn: 'Shortness of Breath',
+      nameBn: 'শ্বাসকষ্ট',
+      deptKey: 'cardiology',
+      isCountable: false
+    },
+    {
+      id: 'skin_rash',
+      nameEn: 'Skin Rash / Itching',
+      nameBn: 'চর্মরোগ বা চুলকানি',
+      deptKey: 'internal medicine',
+      isCountable: false
+    },
+    {
+      id: 'fatigue',
+      nameEn: 'Extreme Fatigue / Weakness',
+      nameBn: 'অতিরিক্ত দুর্বলতা বা ক্লান্তি',
+      deptKey: 'internal medicine',
+      isCountable: false
+    }
+  ], [])
+
+  const durationOptions = useMemo(() => [
+    { value: '< 24 Hours', labelEn: '< 24 Hours', labelBn: '< ২৪ ঘণ্টা' },
+    { value: '1–3 Days', labelEn: '1–3 Days', labelBn: '১–৩ দিন' },
+    { value: '4–7 Days', labelEn: '4–7 Days', labelBn: '৪–৭ দিন' },
+    { value: '1–2 Weeks', labelEn: '1–2 Weeks', labelBn: '১–২ সপ্তাহ' },
+    { value: '1+ Months', labelEn: '1+ Months', labelBn: '১+ মাস' }
+  ], [])
+
+  const [symptomSearch, setSymptomSearch] = useState('')
+  const [selectedSymptomIds, setSelectedSymptomIds] = useState(['headache', 'vomiting'])
+  const [symptomDetails, setSymptomDetails] = useState({
+    headache: { duration: '1–3 Days', count: '', severity: 3 },
+    vomiting: { duration: '< 24 Hours', count: '3–5 times/day', severity: 4 }
+  })
+
+  // Filter symptoms based on search input
+  const filteredSymptoms = useMemo(() => {
+    const q = symptomSearch.toLowerCase().trim()
+    if (!q) return allSymptoms
+    return allSymptoms.filter(s =>
+      s.nameEn.toLowerCase().includes(q) ||
+      s.nameBn.toLowerCase().includes(q) ||
+      s.deptKey.toLowerCase().includes(q)
     )
+  }, [allSymptoms, symptomSearch])
+
+  // Toggle symptom selection
+  const toggleSymptom = (symp) => {
+    if (selectedSymptomIds.includes(symp.id)) {
+      setSelectedSymptomIds(prev => prev.filter(id => id !== symp.id))
+    } else {
+      setSelectedSymptomIds(prev => [...prev, symp.id])
+      setSymptomDetails(prev => ({
+        ...prev,
+        [symp.id]: {
+          duration: '1–3 Days',
+          count: symp.isCountable ? symp.countOptionsEn[0] : '',
+          severity: 3
+        }
+      }))
+    }
   }
 
-  // Determine current step based on completed fields
-  let currentStep = 1
-  if (selectedSymptoms.length > 0 && duration) {
-    currentStep = 2
-  }
-  if (currentStep === 2 && severity) {
-    currentStep = 3
-  }
-
-  const handleBook = () => {
-    navigate('/book-appointment')
+  // Update specific symptom duration
+  const handleSetDuration = (sympId, durVal) => {
+    setSymptomDetails(prev => ({
+      ...prev,
+      [sympId]: { ...(prev[sympId] || { severity: 3 }), duration: durVal }
+    }))
   }
 
-  const symptomOptions = lang === 'bn' 
-    ? ['মাথাব্যথা', 'মাথা ঘোরা', 'বমি']
-    : ['Headache', 'Dizziness', 'Vomiting'];
-  
-  const durationOptions = lang === 'bn'
-    ? ['১-২ দিন', '১-২ সপ্তাহ', '১+ মাস']
-    : ['1-2 days', '1-2 weeks', '1+ months'];
+  // Update specific symptom count
+  const handleSetCount = (sympId, countVal) => {
+    setSymptomDetails(prev => ({
+      ...prev,
+      [sympId]: { ...(prev[sympId] || { severity: 3 }), count: countVal }
+    }))
+  }
+
+  // Update specific symptom severity
+  const handleSetSeverity = (sympId, sevVal) => {
+    setSymptomDetails(prev => ({
+      ...prev,
+      [sympId]: { ...(prev[sympId] || {}), severity: sevVal }
+    }))
+  }
+
+  // Matched Department and Doctors
+  const recommendedDeptKey = useMemo(() => {
+    if (selectedSymptomIds.includes('chest_pain') || selectedSymptomIds.includes('shortness_of_breath')) return 'cardiology'
+    if (selectedSymptomIds.includes('headache') || selectedSymptomIds.includes('dizziness')) return 'neurology'
+    if (selectedSymptomIds.includes('ear_pain')) return 'ent'
+    if (selectedSymptomIds.includes('joint_pain')) return 'orthopedics'
+    return 'internal medicine'
+  }, [selectedSymptomIds])
+
+  const matchedDoctors = useMemo(() => {
+    return DOCTORS_DATA
+      .filter(d => d.deptKey === recommendedDeptKey || d.deptKey === 'internal medicine')
+      .slice(0, 3)
+      .map(d => getLocalizedDoctor(d, lang))
+  }, [recommendedDeptKey, lang])
 
   return (
     <div className="sc-page">
       <div className="sc-content">
+
         {/* Header */}
         <div className="sc-header">
           <h1 className="sc-title">{lang === 'bn' ? 'লক্ষণ পরীক্ষক' : 'Symptom Checker'}</h1>
-          <p className="sc-subtitle">{lang === 'bn' ? 'আপনার লক্ষণগুলি চিহ্নিত করুন, সঠিক বিশেষজ্ঞ খুঁজুন এবং অ্যাপয়েন্টমেন্টের জন্য প্রস্তুত হন' : 'Identify your symptoms, find the right specialist, and prepare for your appointment'}</p>
+          <p className="sc-subtitle">
+            {lang === 'bn' 
+              ? 'শারীরিক লক্ষণ অনুসন্ধান ও নির্বাচন করুন এবং সময়কাল নির্দিষ্ট করে সঠিক বিশেষজ্ঞ ডাক্তার খুঁজুন'
+              : 'Search or select your symptoms and specify durations to receive department guidance'}
+          </p>
         </div>
 
-        {/* Main Area */}
-        <div className="sc-main">
-          {/* Stepper */}
-          <div className="sc-stepper">
-            <div className={`sc-step ${currentStep >= 1 ? 'active' : ''}`}>
-              <div className="sc-step-circle">1</div>
-              <span className="sc-step-label">{lang === 'bn' ? 'লক্ষণ' : 'Symptoms'}</span>
-            </div>
-            <div className={`sc-step-line ${currentStep >= 2 ? 'active' : ''}`}></div>
+        <div className="sc-layout-grid">
+          
+          {/* LEFT: Symptoms Search, Selection & Detailed Options */}
+          <div className="sc-main-cards">
             
-            <div className={`sc-step ${currentStep >= 2 ? 'active' : ''}`}>
-              <div className="sc-step-circle">2</div>
-              <span className="sc-step-label">{lang === 'bn' ? 'বিবরণ' : 'Details'}</span>
-            </div>
-            <div className={`sc-step-line ${currentStep >= 3 ? 'active' : ''}`}></div>
-            
-            <div className={`sc-step ${currentStep >= 3 ? 'active' : ''}`}>
-              <div className="sc-step-circle">3</div>
-              <span className="sc-step-label">{lang === 'bn' ? 'ফলাফল' : 'Result'}</span>
-            </div>
-          </div>
-
-          <div className="sc-cards">
-            {/* Step 1: Symptoms Card */}
+            {/* Search & Suggestions Card */}
             <div className="sc-card">
-              <div className="sc-card-section">
-                <h4 className="sc-section-label">{lang === 'bn' ? 'আপনার লক্ষণ' : 'YOUR SYMPTOMS'}</h4>
-                <div className="sc-input-wrapper">
-                  <input 
-                    type="text" 
-                    className="sc-input" 
-                    placeholder={lang === 'bn' ? "বাংলা বা ইংরেজিতে লক্ষণ যোগ করুন" : "Add symptoms in Bangla or English"} 
-                  />
-                </div>
-                <div className="sc-pills">
-                  {symptomOptions.map(symptom => (
-                    <button
-                      key={symptom}
-                      className={`sc-pill ${selectedSymptoms.includes(symptom) ? 'active' : ''}`}
-                      onClick={() => toggleSymptom(symptom)}
-                    >
-                      {symptom}
-                    </button>
-                  ))}
-                </div>
+              <h3 className="sc-card-title">{lang === 'bn' ? 'লক্ষণ খুঁজুন বা নির্বাচন করুন' : 'Search or Select Symptoms'}</h3>
+              
+              {/* Search Bar for Symptoms */}
+              <div className="sc-search-bar-wrap">
+                <svg className="sc-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input
+                  type="text"
+                  className="sc-search-input"
+                  placeholder={lang === 'bn' ? 'লক্ষণ লিখুন (যেমন: কাশি, মাথাব্যথা, বমি)...' : 'Type a symptom (e.g. Cough, Fever, Headache, Vomiting)...'}
+                  value={symptomSearch}
+                  onChange={(e) => setSymptomSearch(e.target.value)}
+                />
+                {symptomSearch && (
+                  <button type="button" className="sc-search-clear-btn" onClick={() => setSymptomSearch('')}>×</button>
+                )}
               </div>
 
-              <div className="sc-card-section">
-                <h4 className="sc-section-label">{lang === 'bn' ? 'ফলো-আপ প্রশ্নাবলী' : 'FOLLOW-UP ANSWERS'}</h4>
-                <p className="sc-question">{lang === 'bn' ? 'কতদিন ধরে আপনার এই লক্ষণগুলো আছে?' : 'How long have you had these symptoms?'}</p>
-                <div className="sc-pills">
-                  {durationOptions.map(opt => (
+              {/* Suggestions Pills */}
+              <div className="sc-symptoms-pills-wrap">
+                {filteredSymptoms.map(symp => {
+                  const isSelected = selectedSymptomIds.includes(symp.id)
+                  return (
                     <button
-                      key={opt}
-                      className={`sc-pill ${duration === opt ? 'active' : ''}`}
-                      onClick={() => setDuration(opt)}
+                      key={symp.id}
+                      type="button"
+                      className={`sc-symptom-pill ${isSelected ? 'selected' : ''}`}
+                      onClick={() => toggleSymptom(symp)}
                     >
-                      {opt}
+                      <span>{lang === 'bn' ? symp.nameBn : symp.nameEn}</span>
+                      {isSelected && <span className="sc-pill-check">✓</span>}
                     </button>
-                  ))}
-                </div>
+                  )
+                })}
               </div>
+
+              {filteredSymptoms.length === 0 && (
+                <div className="sc-no-symp-found">
+                  {lang === 'bn' ? `"${symptomSearch}" নামে কোনো তালিকাভুক্ত লক্ষণ পাওয়া যায়নি।` : `No symptoms found matching "${symptomSearch}".`}
+                </div>
+              )}
             </div>
 
-            {/* Step 2: Details Card */}
-            {currentStep >= 2 && (
+            {/* Individual Duration & Count Configuration Cards */}
+            {selectedSymptomIds.length > 0 && (
               <div className="sc-card sc-fade-in">
-                <p className="sc-question">{lang === 'bn' ? 'মাথাব্যথা কতটা তীব্র? (১-৫)' : 'How severe is the headache? (1-5)'}</p>
-                <div className="sc-pills sc-pills-numbers">
-                  {[1, 2, 3, 4, 5].map(num => (
-                    <button
-                      key={num}
-                      className={`sc-pill sc-pill-circle ${severity === num ? 'active' : ''}`}
-                      onClick={() => setSeverity(num)}
-                    >
-                      {lang === 'bn' ? ['১','২','৩','৪','৫'][num-1] : num}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+                <div className="sc-individual-symptoms-list">
+                  {selectedSymptomIds.map(sympId => {
+                    const sympObj = allSymptoms.find(s => s.id === sympId)
+                    if (!sympObj) return null
+                    const details = symptomDetails[sympId] || { duration: '1–3 Days', count: '', severity: 3 }
 
-            {/* Step 3: Results */}
-            {currentStep >= 3 && (
-              <div className="sc-results sc-fade-in">
-                {/* Info Alert */}
-                <div className="sc-alert-info">
-                  <div className="sc-alert-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12.01" y2="8" />
-                    </svg>
-                  </div>
-                  <div className="sc-alert-text">
-                    <strong>{lang === 'bn' ? 'জরুরি নয়।' : 'Not an emergency.'}</strong> {lang === 'bn' ? 'আপনার লক্ষণগুলি নির্দেশ করে যে আগামী কয়েক দিনের মধ্যে একটি সাধারণ বিশেষজ্ঞ দেখানো ভালো।' : 'Your symptoms suggest a non-urgent specialist visit within the next few days.'}
-                  </div>
-                </div>
+                    return (
+                      <div key={sympId} className="sc-symptom-config-box">
+                        <div className="sc-config-header">
+                          <div className="sc-config-title-row">
+                            <span className="sc-config-dot"></span>
+                            <h4 className="sc-config-name">{lang === 'bn' ? sympObj.nameBn : sympObj.nameEn}</h4>
+                          </div>
+                          <button 
+                            type="button" 
+                            className="sc-remove-symp-btn"
+                            onClick={() => toggleSymptom(sympObj)}
+                            title="Remove symptom"
+                          >
+                            ×
+                          </button>
+                        </div>
 
-                {/* Recommended Specialist */}
-                <div className="sc-card">
-                  <h4 className="sc-section-label">{lang === 'bn' ? 'প্রস্তাবিত বিশেষজ্ঞ' : 'RECOMMENDED SPECIALIST'}</h4>
-                  <h2 className="sc-specialist-title">{lang === 'bn' ? 'জেনারেল ফিজিশিয়ান' : 'General Physician'}</h2>
-                  <p className="sc-specialist-desc">
-                    {lang === 'bn' ? '১-২ সপ্তাহ ধরে মাথা ঘোরার সাথে মাথাব্যথা থাকলে বিশেষজ্ঞের আগে একজন জেনারেল ফিজিশিয়ানের পরামর্শ নেওয়া ভালো।' : 'Headaches with dizziness of 1-2 weeks duration are best first assessed by a General Physician before a specialist.'}
-                  </p>
-                  <div className="sc-specialist-badge">
-                    {lang === 'bn' ? 'প্রথমে জিপি দেখুন → প্রয়োজন হলে নিউরোলজি' : 'See GP first → Neurology if needed'}
-                  </div>
-                </div>
+                        {/* Separate Duration for this symptom */}
+                        <div className="sc-config-section">
+                          <label className="sc-config-label">
+                            {lang === 'bn' 
+                              ? `"${sympObj.nameBn}" কতদিন ধরে অনুভব করছেন?`
+                              : `Duration:`}
+                          </label>
+                          <div className="sc-duration-chips">
+                            {durationOptions.map(opt => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                className={`sc-duration-chip ${details.duration === opt.value ? 'active' : ''}`}
+                                onClick={() => handleSetDuration(sympId, opt.value)}
+                              >
+                                {lang === 'bn' ? opt.labelBn : opt.labelEn}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
 
-                {/* Doctors */}
-                <div className="sc-doctor-card">
-                  <div className="sc-doctor-info">
-                    <h3 className="sc-doctor-name">{lang === 'bn' ? 'ডা. রাকিব হোসেন' : 'Dr. Rakib Hossain'}</h3>
-                    <p className="sc-doctor-spec">{lang === 'bn' ? 'জেনারেল ফিজিশিয়ান' : 'General Physician'}</p>
-                    <p className="sc-doctor-avail">{lang === 'bn' ? 'উপলব্ধ: শনি, রবি, সোম · সকাল ৯টা-দুপুর ১টা' : 'Available: Sat, Sun, Mon · 9am-1pm'}</p>
-                  </div>
-                  <button className="sc-btn-book" onClick={handleBook}>{lang === 'bn' ? 'বুক' : 'Book'}</button>
-                </div>
+                        {/* Count / Episode Frequency (e.g. for Vomiting, Diarrhea, Fever, Cough) */}
+                        {sympObj.isCountable && (
+                          <div className="sc-config-section">
+                            <label className="sc-config-label">
+                              {lang === 'bn' ? sympObj.countLabelBn : sympObj.countLabelEn}
+                            </label>
+                            <div className="sc-count-chips">
+                              {sympObj.countOptionsEn.map((optEn, idx) => {
+                                const optBn = sympObj.countOptionsBn[idx]
+                                const isCountSelected = details.count === optEn || (!details.count && idx === 0)
+                                return (
+                                  <button
+                                    key={optEn}
+                                    type="button"
+                                    className={`sc-count-chip ${isCountSelected ? 'active' : ''}`}
+                                    onClick={() => handleSetCount(sympId, optEn)}
+                                  >
+                                    {lang === 'bn' ? optBn : optEn}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )}
 
-                <div className="sc-doctor-card">
-                  <div className="sc-doctor-info">
-                    <h3 className="sc-doctor-name">{lang === 'bn' ? 'ডা. ফাহিমা করিম' : 'Dr. Fahima Karim'}</h3>
-                    <p className="sc-doctor-spec">{lang === 'bn' ? 'জেনারেল ফিজিশিয়ান' : 'General Physician'}</p>
-                    <p className="sc-doctor-avail">{lang === 'bn' ? 'উপলব্ধ: সোম, বুধ · বিকেল ৩টা-রাত ৮টা' : 'Available: Mon, Wed · 3pm-8pm'}</p>
-                  </div>
-                  <button className="sc-btn-book" onClick={handleBook}>{lang === 'bn' ? 'বুক' : 'Book'}</button>
-                </div>
-
-                {/* Warning Alert */}
-                <div className="sc-alert-warning">
-                  <div className="sc-alert-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                      <line x1="12" y1="9" x2="12" y2="13" />
-                      <line x1="12" y1="17" x2="12.01" y2="17" />
-                    </svg>
-                  </div>
-                  <div className="sc-alert-text">
-                    {lang === 'bn' ? 'এটি একটি নির্দেশিকা টুল, কোনো চিকিৎসা নির্ণয় নয়। পেশাদার পরামর্শের জন্য সর্বদা একজন যাচাইকৃত ডাক্তারের সাথে পরামর্শ করুন।' : 'This is a guidance tool, not a medical diagnosis. Always consult a verified doctor for professional advice.'}
-                  </div>
+                        {/* Severity (1 to 5) */}
+                        <div className="sc-config-section">
+                          <label className="sc-config-label">
+                            {lang === 'bn' ? 'তীব্রতার মাত্রা (১ = মৃদু, ৫ = তীব্র):' : 'Severity Scale (1 = Mild, 5 = Severe):'}
+                          </label>
+                          <div className="sc-severity-pills">
+                            {[1, 2, 3, 4, 5].map(num => (
+                              <button
+                                key={num}
+                                type="button"
+                                className={`sc-sev-btn ${details.severity === num ? 'active' : ''}`}
+                                onClick={() => handleSetSeverity(sympId, num)}
+                              >
+                                {num}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
           </div>
+
+          {/* RIGHT: Results & Doctor Recommendations */}
+          <div className="sc-sidebar-results">
+            {selectedSymptomIds.length > 0 ? (
+              <div className="sc-results-card sc-fade-in">
+                <div className="sc-results-banner">
+                  <div className="sc-alert-icon-wrap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                      <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="sc-rec-badge">{lang === 'bn' ? 'পরামর্শকৃত বিভাগ' : 'RECOMMENDED SPECIALTY'}</h4>
+                    <h2 className="sc-rec-dept-title">
+                      {recommendedDeptKey === 'neurology' ? (lang === 'bn' ? 'নিউরোলজি / মেডিসিন' : 'Neurology & Medicine') :
+                       recommendedDeptKey === 'cardiology' ? (lang === 'bn' ? 'কার্ডিওলজি' : 'Cardiology') :
+                       recommendedDeptKey === 'ent' ? (lang === 'bn' ? 'ইএনটি (নাক, কান, গলা)' : 'ENT Specialist') :
+                       recommendedDeptKey === 'orthopedics' ? (lang === 'bn' ? 'অর্থোপেডিক্স' : 'Orthopedics') :
+                       (lang === 'bn' ? 'ইন্টারনাল মেডিসিন / জেনারেল ফিজিশিয়ান' : 'Internal Medicine')}
+                    </h2>
+                  </div>
+                </div>
+
+                <div className="sc-rec-body">
+                  <p className="sc-rec-desc">
+                    {lang === 'bn'
+                      ? 'আপনার নির্বাচিত লক্ষণ ও সময়কালের ওপর ভিত্তি করে নিচে উল্লিখিত বিশেষজ্ঞদের সাথে পরামর্শ করার সুপারিশ করা হচ্ছে।'
+                      : 'Based on your specific symptoms and counts, here are matched verified hospital specialists ready for consultation.'}
+                  </p>
+
+                  <h5 className="sc-avail-docs-title">{lang === 'bn' ? 'উপলব্ধ বিশেষজ্ঞ ডাক্তারগণ:' : 'Available Verified Specialists:'}</h5>
+                  <div className="sc-docs-list">
+                    {matchedDoctors.map(doc => (
+                      <div key={doc.id} className="sc-matched-doc-item">
+                        <div className="sc-doc-initials">{doc.initials}</div>
+                        <div className="sc-doc-meta">
+                          <h4 className="sc-doc-name">{doc.name}</h4>
+                          <span className="sc-doc-spec">{doc.department} • {doc.room}</span>
+                        </div>
+                        <button
+                          type="button"
+                          className="sc-book-doc-btn"
+                          onClick={() => navigate(`/book-appointment?doctor=${doc.id}`)}
+                        >
+                          {lang === 'bn' ? 'বুক' : 'Book'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="sc-disclaimer-box">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  <span>{lang === 'bn' ? 'এটি কোনো চূড়ান্ত রোগ নির্ণয় নয়। জরুরি প্রয়োজনে ১০৬৬৬ নম্বরে কল করুন।' : 'This is a preliminary triage guide. For emergency care, call 10666.'}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="sc-sidebar-empty">
+                <p>{lang === 'bn' ? 'লক্ষণ নির্বাচন করলে এখানে প্রস্তাবিত বিশেষজ্ঞ ফলাফল দেখতে পাবেন।' : 'Select symptoms on the left to see personalized doctor recommendations.'}</p>
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </div>

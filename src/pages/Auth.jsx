@@ -46,9 +46,14 @@ export default function Auth() {
         setError(result.message || (lang === 'bn' ? 'সঠিক তথ্য লিখুন' : 'Invalid credentials'))
       }
     } else {
-      // Sign Up Validation
-      if (!fullName || !email || !phone || !password) {
-        setError(lang === 'bn' ? 'অনুগ্রহ করে সমস্ত আবশ্যক তথ্য পূরণ করুন' : 'Please complete all required fields')
+      // Sign Up Validation (Phone is required, Email is optional)
+      if (!fullName || !phone || !password) {
+        setError(lang === 'bn' ? 'অনুগ্রহ করে নাম, ফোন নম্বর ও পাসওয়ার্ড পূরণ করুন' : 'Please fill in Name, Phone Number and Password')
+        return
+      }
+
+      if (role === 'patient' && !nid.trim()) {
+        setError(lang === 'bn' ? 'রোগীদের জন্য জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন নম্বর আবশ্যক' : 'NID / Birth Certificate Number is required for patient registration')
         return
       }
 
@@ -155,28 +160,60 @@ export default function Auth() {
             </div>
           )}
 
-          {/* Email Address field */}
-          <div className="auth-form-group">
-            <label className="auth-label">{t('emailAddress')}</label>
-            <div className="auth-input-wrapper">
-              <span className="auth-input-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2" />
-                  <line x1="2" y1="10" x2="22" y2="10" />
-                </svg>
-              </span>
-              <input 
-                type="email" 
-                className="auth-input" 
-                placeholder={t('enterEmail')} 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required={!isLogin || role !== 'doctor'}
-              />
+          {/* Login Identifier field (Email or Phone / Doctor License) */}
+          {isLogin && (
+            <div className="auth-form-group">
+              <label className="auth-label">
+                {role === 'doctor' 
+                  ? (lang === 'bn' ? 'ইমেইল অথবা বিএমডিসি লাইসেন্স নম্বর' : 'Email or Doctor License No.')
+                  : (lang === 'bn' ? 'ইমেইল অথবা ফোন নম্বর' : 'Email or Phone Number')}
+              </label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <line x1="2" y1="10" x2="22" y2="10" />
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  className="auth-input" 
+                  placeholder={role === 'doctor' 
+                    ? (lang === 'bn' ? 'ইমেইল বা বিএমডিসি নম্বর লিখুন' : 'Enter email or BMDC number')
+                    : (lang === 'bn' ? 'ইমেইল বা ফোন নম্বর লিখুন' : 'Enter email or phone')} 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Phone Number field — sign up only */}
+          {/* Phone Number field — Sign Up only (Required) */}
+          {!isLogin && (
+            <div className="auth-form-group">
+              <label className="auth-label">
+                {t('phone')}
+              </label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                </span>
+                <input 
+                  type="tel" 
+                  className="auth-input" 
+                  placeholder={t('enterPhone')} 
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Email Address field — Sign Up only (Optional) */}
           {!isLogin && (
             <div className="auth-form-group">
               <label className="auth-label">
@@ -191,12 +228,11 @@ export default function Auth() {
                   </svg>
                 </span>
                 <input 
-                  type="tel" 
+                  type="email" 
                   className="auth-input" 
-                  placeholder={t('enterPhone')} 
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
+                  placeholder={t('enterEmail')} 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -263,12 +299,11 @@ export default function Auth() {
             </div>
           )}
 
-          {/* NID field — Patient Role sign up only */}
+          {/* NID / Birth Certificate field — Patient Role sign up (Required) */}
           {!isLogin && role === 'patient' && (
             <div className="auth-form-group">
               <label className="auth-label">
-                {t('nidCard')}
-                <span className="auth-optional-badge">Optional</span>
+                {lang === 'bn' ? 'জাতীয় পরিচয়পত্র / জন্ম নিবন্ধন নম্বর' : 'NID / Birth Certificate Number'}
               </label>
               <div className="auth-input-wrapper">
                 <span className="auth-input-icon">
@@ -282,9 +317,10 @@ export default function Auth() {
                 <input 
                   type="text" 
                   className="auth-input" 
-                  placeholder={t('enterNid')} 
+                  placeholder={lang === 'bn' ? 'এনআইডি বা জন্ম নিবন্ধন নম্বর লিখুন' : 'Enter NID or Birth Certificate No.'} 
                   value={nid}
                   onChange={(e) => setNid(e.target.value)}
+                  required
                 />
               </div>
             </div>

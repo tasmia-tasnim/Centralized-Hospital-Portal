@@ -142,19 +142,6 @@
   gap: 10px;
 }
 
-.navbar-user-box {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.navbar-user-name {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  white-space: nowrap;
-}
-
 .btn-auth {
   display: inline-block;
   padding: 7px 16px;
@@ -180,13 +167,193 @@
   color: var(--color-text-white);
 }
 
-.btn-signout {
-  color: #DC2626;
-  border-color: #DC2626;
+/* ==========================================================================
+   Facebook-style Profile Avatar & Dropdown
+   ========================================================================== */
+
+.navbar-profile-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.btn-signout:hover {
-  background-color: #FEF2F2;
+.navbar-avatar-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.navbar-avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border: 1.5px solid #cbd5e1;
+}
+
+.navbar-avatar-btn:hover .navbar-avatar-circle {
+  background-color: #cbd5e1;
+  color: #1e293b;
+}
+
+/* Bottom-right Facebook-style chevron badge */
+.navbar-avatar-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  background-color: #334155;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Popover Menu */
+.navbar-profile-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 280px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  padding: 12px;
+  z-index: 200;
+  animation: navPopoverIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes navPopoverIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.navbar-popover-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+}
+
+.navbar-popover-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.navbar-popover-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.navbar-popover-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navbar-popover-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #d97706;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.navbar-popover-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 8px 0;
+}
+
+.navbar-popover-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navbar-popover-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.navbar-popover-item:hover {
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+.navbar-popover-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.navbar-popover-item.signout {
+  color: #dc2626;
+}
+
+.navbar-popover-item.signout:hover {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.navbar-popover-icon.signout {
+  background-color: #fee2e2;
+  color: #dc2626;
 }
 
 /* ===== Responsive Mobile Styles ===== */
@@ -271,8 +438,16 @@
     padding: 10px;
   }
 
-  .navbar-user-box {
+  .navbar-profile-wrapper {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
+  }
+
+  .navbar-profile-popover {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid #e2e8f0;
+    margin-top: 8px;
   }
 }
