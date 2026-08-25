@@ -1,0 +1,339 @@
+/* Patient Profile Page Styles matching Central Hospital Emerald theme */
+.pp-page {
+  min-height: calc(100vh - 120px);
+  background-color: #F8FAFC;
+  padding-bottom: 60px;
+}
+
+/* Toast */
+.pp-toast {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  background: #ffffff;
+  border: 1px solid #dcfce7;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #166534;
+  z-index: 1000;
+  animation: ppSlide 0.3s ease;
+}
+
+@keyframes ppSlide {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Central Hospital Theme Banner Header (Forest Emerald Green) */
+.pp-hero {
+  background: #1B3C35;
+  color: #ffffff;
+  padding: 34px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pp-hero-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pp-hero-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #ffffff;
+}
+
+.pp-hero-subtitle {
+  font-size: 13.5px;
+  color: #cbd5e1;
+}
+
+/* Content Container */
+.pp-content-container {
+  max-width: 760px;
+  margin: 28px auto 0;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Card */
+.pp-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 26px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+/* Header inside Card */
+.pp-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pp-user-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pp-avatar-circle {
+  width: 48px;
+  height: 48px;
+  background: #EFF5F2;
+  border: 1.5px solid #d1fae5;
+  color: #1B3C35;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pp-user-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.pp-user-email {
+  font-size: 12.5px;
+  color: #64748b;
+}
+
+/* Edit Button */
+.pp-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1B3C35;
+  background: #EFF5F2;
+  border: 1px solid #d1fae5;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pp-edit-btn:hover {
+  background: #1B3C35;
+  color: #ffffff;
+}
+
+.pp-edit-btn.saving {
+  background: #1B3C35;
+  color: #ffffff;
+  border-color: #1B3C35;
+}
+
+.pp-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 20px 0;
+}
+
+/* 2-Column Form Grid */
+.pp-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.pp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pp-form-group.full-row {
+  grid-column: span 2;
+}
+
+.pp-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.pp-input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  gap: 10px;
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.pp-input-wrap.editable {
+  background: #ffffff;
+  border-color: #94a3b8;
+}
+
+.pp-input-wrap.editable:focus-within {
+  border-color: #1B3C35;
+  box-shadow: 0 0 0 3px rgba(27, 60, 53, 0.08);
+}
+
+.pp-input-icon {
+  display: flex;
+  align-items: center;
+  color: #94a3b8;
+}
+
+.pp-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  font-family: inherit;
+}
+
+.pp-input.no-icon {
+  padding: 2px 0;
+}
+
+.pp-select {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.pp-select-arrow {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.pp-save-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.pp-cancel-btn {
+  padding: 8px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.pp-submit-save-btn {
+  padding: 8px 20px;
+  background: #1B3C35;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.pp-submit-save-btn:hover {
+  background: #152E29;
+}
+
+/* Change Password Card */
+.pp-pw-card {
+  padding: 22px 26px;
+}
+
+.pp-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pp-card-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pp-pw-alert {
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+.pp-pw-alert.error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fee2e2;
+}
+
+.pp-pw-alert.success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #dcfce7;
+}
+
+.pp-pw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pp-pw-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pp-pw-btn-row {
+  margin-top: 4px;
+}
+
+.pp-update-pw-btn {
+  padding: 9px 18px;
+  background: #1B3C35;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pp-update-pw-btn:hover {
+  background: #152E29;
+}
+
+@media (max-width: 640px) {
+  .pp-form-grid, .pp-pw-row {
+    grid-template-columns: 1fr;
+  }
+  .pp-form-group.full-row {
+    grid-column: span 1;
+  }
+}

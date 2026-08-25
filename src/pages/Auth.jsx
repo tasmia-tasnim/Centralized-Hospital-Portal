@@ -33,20 +33,39 @@ export default function Auth() {
     setError('')
     
     if (isLogin) {
-      const identifier = role === 'doctor' ? (email || licenseNumber) : email
-      if (!identifier || !password) {
-        setError(lang === 'bn' ? 'অনুগ্রহ করে সমস্ত প্রয়োজনীয় ঘর পূরণ করুন' : 'Please fill in all required fields')
-        return
-      }
-      const result = login(identifier, password, role)
-      if (result.success) {
-        const from = location.state?.from?.pathname || '/'
-        navigate(from, { replace: true })
+      if (role === 'doctor') {
+        if (!email && !licenseNumber) {
+          setError(lang === 'bn' ? 'অনুগ্রহ করে ডাক্তারের ইমেইল অথবা বিএমডিসি লাইসেন্স নম্বর লিখুন' : 'Please provide Doctor Email or BMDC License Number')
+          return
+        }
+        if (!password) {
+          setError(lang === 'bn' ? 'অনুগ্রহ করে পাসওয়ার্ড লিখুন' : 'Please enter password')
+          return
+        }
+        const identifier = email || licenseNumber
+        const result = login(identifier, password, 'doctor', licenseNumber)
+        if (result.success) {
+          const from = location.state?.from?.pathname || '/'
+          navigate(from, { replace: true })
+        } else {
+          setError(result.message || (lang === 'bn' ? 'সঠিক তথ্য লিখুন' : 'Invalid doctor credentials'))
+        }
       } else {
-        setError(result.message || (lang === 'bn' ? 'সঠিক তথ্য লিখুন' : 'Invalid credentials'))
+        // Patient / Admin login
+        if (!email || !password) {
+          setError(lang === 'bn' ? 'অনুগ্রহ করে সমস্ত প্রয়োজনীয় ঘর পূরণ করুন' : 'Please fill in all required fields')
+          return
+        }
+        const result = login(email, password, role)
+        if (result.success) {
+          const from = location.state?.from?.pathname || '/'
+          navigate(from, { replace: true })
+        } else {
+          setError(result.message || (lang === 'bn' ? 'সঠিক তথ্য লিখুন' : 'Invalid email or password'))
+        }
       }
     } else {
-      // Sign Up Validation (Phone is required, Email is optional)
+      // Sign Up Validation
       if (!fullName || !phone || !password) {
         setError(lang === 'bn' ? 'অনুগ্রহ করে নাম, ফোন নম্বর ও পাসওয়ার্ড পূরণ করুন' : 'Please fill in Name, Phone Number and Password')
         return
@@ -151,7 +170,7 @@ export default function Auth() {
                 <input 
                   type="text" 
                   className="auth-input" 
-                  placeholder={role === 'doctor' ? (lang === 'bn' ? 'ডা. নাম লিখুন (যেমন: ডা. আবরার হোসেন)' : 'Dr. Full Name (e.g. Dr. Alex Morgan)') : t('enterFullName')} 
+                  placeholder={role === 'doctor' ? (lang === 'bn' ? 'ডা. নাম লিখুন (যেমন: ডা. ইমরান কবির)' : 'Dr. Full Name (e.g. Dr. Imran Kabir)') : t('enterFullName')} 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -160,13 +179,64 @@ export default function Auth() {
             </div>
           )}
 
-          {/* Login Identifier field (Email or Phone / Doctor License) */}
-          {isLogin && (
+          {/* DOCTOR SPECIFIC SIGN-IN FIELDS: Separate Email and BMDC License Number */}
+          {isLogin && role === 'doctor' && (
+            <>
+              {/* Doctor Email Field */}
+              <div className="auth-form-group">
+                <label className="auth-label">
+                  {lang === 'bn' ? 'ডাক্তারের ইমেইল ঠিকানা' : 'Doctor Email Address'}
+                </label>
+                <div className="auth-input-wrapper">
+                  <span className="auth-input-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <line x1="2" y1="10" x2="22" y2="10" />
+                    </svg>
+                  </span>
+                  <input 
+                    type="text" 
+                    className="auth-input" 
+                    placeholder={lang === 'bn' ? 'ডাক্তারের ইমেইল ঠিকানা লিখুন' : 'Enter doctor email address'} 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Doctor BMDC License Field (Separate) */}
+              <div className="auth-form-group">
+                <label className="auth-label">
+                  {lang === 'bn' ? 'ডাক্তার বিএমডিসি লাইসেন্স নম্বর' : 'Doctor License Number (BMDC)'}
+                  <span className="auth-optional-badge">{lang === 'bn' ? 'যাচাইকৃত' : 'BMDC Verified'}</span>
+                </label>
+                <div className="auth-input-wrapper">
+                  <span className="auth-input-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="16" rx="2"/>
+                      <circle cx="9" cy="10" r="2"/>
+                      <line x1="15" y1="8" x2="17" y2="8"/>
+                      <line x1="15" y1="12" x2="17" y2="12"/>
+                      <line x1="7" y1="16" x2="17" y2="16"/>
+                    </svg>
+                  </span>
+                  <input 
+                    type="text" 
+                    className="auth-input" 
+                    placeholder={lang === 'bn' ? 'বিএমডিসি নম্বর লিখুন (যেমন: BMDC-A-45012)' : 'Enter BMDC License No. (e.g. BMDC-A-45012)'} 
+                    value={licenseNumber}
+                    onChange={(e) => setLicenseNumber(e.target.value)}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* PATIENT / ADMIN SIGN-IN EMAIL/PHONE FIELD */}
+          {isLogin && role !== 'doctor' && (
             <div className="auth-form-group">
               <label className="auth-label">
-                {role === 'doctor' 
-                  ? (lang === 'bn' ? 'ইমেইল অথবা বিএমডিসি লাইসেন্স নম্বর' : 'Email or Doctor License No.')
-                  : (lang === 'bn' ? 'ইমেইল অথবা ফোন নম্বর' : 'Email or Phone Number')}
+                {lang === 'bn' ? 'ইমেইল অথবা ফোন নম্বর' : 'Email or Phone Number'}
               </label>
               <div className="auth-input-wrapper">
                 <span className="auth-input-icon">
@@ -178,9 +248,7 @@ export default function Auth() {
                 <input 
                   type="text" 
                   className="auth-input" 
-                  placeholder={role === 'doctor' 
-                    ? (lang === 'bn' ? 'ইমেইল বা বিএমডিসি নম্বর লিখুন' : 'Enter email or BMDC number')
-                    : (lang === 'bn' ? 'ইমেইল বা ফোন নম্বর লিখুন' : 'Enter email or phone')} 
+                  placeholder={lang === 'bn' ? 'ইমেইল বা ফোন নম্বর লিখুন' : 'Enter email or phone number'} 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -189,7 +257,7 @@ export default function Auth() {
             </div>
           )}
 
-          {/* Phone Number field — Sign Up only (Required) */}
+          {/* Phone Number field — Sign Up only */}
           {!isLogin && (
             <div className="auth-form-group">
               <label className="auth-label">
@@ -213,7 +281,7 @@ export default function Auth() {
             </div>
           )}
 
-          {/* Email Address field — Sign Up only (Optional) */}
+          {/* Email Address field — Sign Up only */}
           {!isLogin && (
             <div className="auth-form-group">
               <label className="auth-label">
@@ -251,7 +319,7 @@ export default function Auth() {
               <input 
                 type={showPassword ? 'text' : 'password'} 
                 className="auth-input" 
-                placeholder={isLogin ? (lang === 'bn' ? 'পাসওয়ার্ড লিখুন (ডেমো: ১)' : 'Enter password (demo: 1)') : t('enterPassword')}
+                placeholder={t('enterPassword')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -270,12 +338,11 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* Doctor License Number field — Doctor Role (Sign Up & Sign In) */}
-          {role === 'doctor' && (
+          {/* Doctor BMDC field on signup */}
+          {!isLogin && role === 'doctor' && (
             <div className="auth-form-group">
               <label className="auth-label">
                 {t('doctorLicense')}
-                {isLogin && <span className="auth-optional-badge">{lang === 'bn' ? 'অথবা ইমেইল' : 'Or Email'}</span>}
               </label>
               <div className="auth-input-wrapper">
                 <span className="auth-input-icon">
@@ -293,13 +360,13 @@ export default function Auth() {
                   placeholder={t('enterDoctorLicense')} 
                   value={licenseNumber}
                   onChange={(e) => setLicenseNumber(e.target.value)}
-                  required={!isLogin}
+                  required
                 />
               </div>
             </div>
           )}
 
-          {/* NID / Birth Certificate field — Patient Role sign up (Required) */}
+          {/* NID field on patient signup */}
           {!isLogin && role === 'patient' && (
             <div className="auth-form-group">
               <label className="auth-label">
@@ -327,7 +394,9 @@ export default function Auth() {
           )}
 
           <button type="submit" className="auth-submit-btn">
-            {isLogin ? t('signIn') : t('signUp')}
+            {isLogin 
+              ? (role === 'doctor' ? (lang === 'bn' ? 'ডাক্তার পোর্টালে প্রবেশ করুন' : 'Sign In as Doctor') : t('signIn')) 
+              : t('signUp')}
           </button>
         </form>
 

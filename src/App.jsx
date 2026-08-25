@@ -5,6 +5,11 @@ import Footer from './components/Footer'
 import Chatbot from './components/Chatbot'
 import Home from './pages/Home'
 import FindDoctor from './pages/FindDoctor'
+import DoctorProfile from './pages/DoctorProfile'
+import DoctorDashboard from './pages/DoctorDashboard'
+import PatientProfile from './pages/PatientProfile'
+import PatientDashboard from './pages/PatientDashboard'
+import Pharmacy from './pages/Pharmacy'
 import BloodBank from './pages/BloodBank'
 import BloodDonorNetwork from './pages/BloodDonorNetwork'
 import BedAvailability from './pages/BedAvailability'
@@ -38,6 +43,12 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/find-doctor" element={<FindDoctor />} />
+          <Route path="/doctor/:id" element={<DoctorProfile />} />
+          <Route path="/doctor-profile/:id" element={<DoctorProfile />} />
+          <Route path="/doctor-dashboard" element={<ProtectedRoute><DoctorDashboard /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><PatientDashboard /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><PatientProfile /></ProtectedRoute>} />
+          <Route path="/pharmacy" element={<Pharmacy />} />
           <Route path="/blood-bank" element={<BloodBank />} />
           <Route path="/blood-donor-network" element={<BloodDonorNetwork />} />
           <Route path="/bed-availability" element={<BedAvailability />} />

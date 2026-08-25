@@ -2,6 +2,31 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 const AuthContext = createContext()
 
+const DEFAULT_PATIENT_PROFILE = {
+  role: 'patient',
+  name: 'ishika',
+  email: 'ishika@test.com',
+  phone: '+880 1712-345678',
+  bloodGroup: 'O+',
+  age: '24',
+  gender: 'Female',
+  address: 'House 42, Road 11, Dhanmondi, Dhaka',
+  emergencyContact: '+880 1819-998877 (Father)',
+  id: 'PT-10023'
+}
+
+const DEFAULT_DOCTOR_PROFILE = {
+  role: 'doctor',
+  name: 'Dr. Imran Kabir',
+  email: 'd',
+  phone: '+880 1812-445566',
+  licenseNumber: 'BMDC-A-45012',
+  department: 'Cardiology',
+  specialization: 'Senior Interventional Cardiologist',
+  room: 'Room 402, East Wing',
+  id: 'DR-4501'
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   
@@ -14,28 +39,42 @@ export function AuthProvider({ children }) {
       } catch (e) {
         console.error('Failed to parse user', e)
       }
+    } else {
+      // Default initial session as logged in patient for seamless demo if user wishes
+      // setUser(DEFAULT_PATIENT_PROFILE)
     }
   }, [])
 
-  const login = (identifier, password, role = 'patient') => {
-    // Demo account shortcuts
-    if (identifier === '1' && password === '1') {
-      const patientUser = { role: 'patient', name: 'Tasnim', id: 'PT-10023' }
-      setUser(patientUser)
-      localStorage.setItem('meditap_user', JSON.stringify(patientUser))
-      return { success: true }
-    } else if (identifier === '2' && password === '2') {
-      const doctorUser = { role: 'doctor', name: 'Dr. Imran Kabir', id: 'DR-4501', licenseNumber: 'BMDC-A-45012', email: 'imran.kabir@centralhospital.org' }
+  const login = (identifier, password, role = 'patient', extraLicense = '') => {
+    // 1. Patient Shortcut: "1" and "1"
+    if (role === 'patient' && ((identifier === '1' && password === '1') || (identifier === 'ishika@test.com' && password === '123456') || identifier === 'ishika')) {
+      const patientUser = { ...DEFAULT_PATIENT_PROFILE }
+      // merge with any saved patient profile edits
+      const savedProfile = localStorage.getItem('patient_profile_data')
+      const mergedUser = savedProfile ? { ...patientUser, ...JSON.parse(savedProfile) } : patientUser
+      setUser(mergedUser)
+      localStorage.setItem('meditap_user', JSON.stringify(mergedUser))
+      return { success: true, role: 'patient' }
+    }
+
+    // 2. Doctor Shortcut: email: "d", pass: "d", license: "d" OR "2" and "2"
+    if (role === 'doctor' && (
+      (identifier === 'd' && password === 'd') || 
+      (identifier === '2' && password === '2') ||
+      (identifier === 'd' && extraLicense === 'd' && password === 'd')
+    )) {
+      const doctorUser = { ...DEFAULT_DOCTOR_PROFILE }
       setUser(doctorUser)
       localStorage.setItem('meditap_user', JSON.stringify(doctorUser))
-      return { success: true }
+      return { success: true, role: 'doctor' }
     }
 
     const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]')
     const foundUser = registeredUsers.find(
       u => (
         u.email?.toLowerCase() === identifier?.toLowerCase() || 
-        (u.licenseNumber && u.licenseNumber.toLowerCase() === identifier?.toLowerCase())
+        (u.licenseNumber && u.licenseNumber.toLowerCase() === identifier?.toLowerCase()) ||
+        (u.phone && u.phone === identifier)
       ) && u.password === password && u.role === role
     )
 
@@ -45,12 +84,26 @@ export function AuthProvider({ children }) {
         name: foundUser.fullName || foundUser.name,
         email: foundUser.email,
         phone: foundUser.phone,
+        bloodGroup: foundUser.bloodGroup || 'O+',
+        age: foundUser.age || '24',
+        gender: foundUser.gender || 'Female',
+        address: foundUser.address || '',
+        emergencyContact: foundUser.emergencyContact || '',
         licenseNumber: foundUser.licenseNumber,
+        department: foundUser.department || 'Cardiology',
         id: foundUser.id
       }
       setUser(sessionUser)
       localStorage.setItem('meditap_user', JSON.stringify(sessionUser))
-      return { success: true }
+      return { success: true, role: foundUser.role }
+    }
+
+    // Fallback: If user entered 'd' for doctor email or license
+    if (role === 'doctor' && (identifier?.toLowerCase() === 'd' || extraLicense?.toLowerCase() === 'd') && password === 'd') {
+      const doctorUser = { ...DEFAULT_DOCTOR_PROFILE }
+      setUser(doctorUser)
+      localStorage.setItem('meditap_user', JSON.stringify(doctorUser))
+      return { success: true, role: 'doctor' }
     }
 
     return { success: false, message: 'Invalid credentials or role mismatch' }
@@ -59,7 +112,7 @@ export function AuthProvider({ children }) {
   const signup = (userData) => {
     const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]')
     
-    if (registeredUsers.some(u => u.email?.toLowerCase() === userData.email?.toLowerCase())) {
+    if (userData.email && registeredUsers.some(u => u.email?.toLowerCase() === userData.email?.toLowerCase())) {
       return { success: false, message: 'An account with this email already exists' }
     }
 
@@ -82,11 +135,28 @@ export function AuthProvider({ children }) {
       name: newUser.fullName || newUser.name,
       email: newUser.email,
       phone: newUser.phone,
+      bloodGroup: newUser.bloodGroup || 'O+',
+      age: newUser.age || '24',
+      gender: newUser.gender || 'Female',
+      address: newUser.address || '',
+      emergencyContact: newUser.emergencyContact || '',
       licenseNumber: newUser.licenseNumber,
+      department: newUser.department || 'General Medicine',
       id: newUser.id
     }
     setUser(sessionUser)
     localStorage.setItem('meditap_user', JSON.stringify(sessionUser))
+    return { success: true, role: newUser.role }
+  }
+
+  const updateUserProfile = (updatedFields) => {
+    if (!user) return
+    const updatedUser = { ...user, ...updatedFields }
+    setUser(updatedUser)
+    localStorage.setItem('meditap_user', JSON.stringify(updatedUser))
+    if (user.role === 'patient') {
+      localStorage.setItem('patient_profile_data', JSON.stringify(updatedUser))
+    }
     return { success: true }
   }
 
@@ -96,7 +166,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   )

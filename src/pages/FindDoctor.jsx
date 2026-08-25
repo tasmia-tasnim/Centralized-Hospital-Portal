@@ -136,7 +136,7 @@ export default function FindDoctor() {
                   <div className="fd-doc-card-actions">
                     <button 
                       className="fd-btn-view"
-                      onClick={() => navigate(`/book-appointment?doctor=${doc.id}`)}
+                      onClick={() => navigate(`/doctor/${doc.id}`)}
                     >
                       {lang === 'bn' ? 'প্রোফাইল দেখুন' : 'View Profile'}
                     </button>
