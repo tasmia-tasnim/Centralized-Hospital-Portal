@@ -20,6 +20,7 @@ import VaccinationPlanner from './pages/VaccinationPlanner'
 import VaccineSchedule from './pages/VaccineSchedule'
 import SymptomChecker from './pages/SymptomChecker'
 import Auth from './pages/Auth'
+import PatientServices from './pages/PatientServices'
 import AmbulanceService from './pages/AmbulanceService'
 import { useAuth } from './context/AuthContext'
 import './App.css'
@@ -42,6 +43,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/patient-services" element={<PatientServices />} />
           <Route path="/find-doctor" element={<FindDoctor />} />
           <Route path="/doctor/:id" element={<DoctorProfile />} />
           <Route path="/doctor-profile/:id" element={<DoctorProfile />} />
@@ -54,6 +56,7 @@ export default function App() {
           <Route path="/bed-availability" element={<BedAvailability />} />
           <Route path="/medical-record" element={<ProtectedRoute><MedicalRecord /></ProtectedRoute>} />
           <Route path="/pricing" element={<PricingDirectory />} />
+          <Route path="/pricing-directory" element={<PricingDirectory />} />
           <Route path="/book-appointment" element={<BookAppointment />} />
           <Route path="/vaccination-planner" element={<VaccinationPlanner />} />
           <Route path="/vaccine-schedule/:vaccineId" element={<VaccineSchedule />} />

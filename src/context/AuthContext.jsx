@@ -12,6 +12,8 @@ const DEFAULT_PATIENT_PROFILE = {
   gender: 'Female',
   address: 'House 42, Road 11, Dhanmondi, Dhaka',
   emergencyContact: '+880 1819-998877 (Father)',
+  allergies: 'Penicillin, Dust',
+  chronicConditions: 'Asthma (Mild)',
   id: 'PT-10023'
 }
 
@@ -39,9 +41,6 @@ export function AuthProvider({ children }) {
       } catch (e) {
         console.error('Failed to parse user', e)
       }
-    } else {
-      // Default initial session as logged in patient for seamless demo if user wishes
-      // setUser(DEFAULT_PATIENT_PROFILE)
     }
   }, [])
 
@@ -89,6 +88,8 @@ export function AuthProvider({ children }) {
         gender: foundUser.gender || 'Female',
         address: foundUser.address || '',
         emergencyContact: foundUser.emergencyContact || '',
+        allergies: foundUser.allergies || '',
+        chronicConditions: foundUser.chronicConditions || '',
         licenseNumber: foundUser.licenseNumber,
         department: foundUser.department || 'Cardiology',
         id: foundUser.id
@@ -140,6 +141,8 @@ export function AuthProvider({ children }) {
       gender: newUser.gender || 'Female',
       address: newUser.address || '',
       emergencyContact: newUser.emergencyContact || '',
+      allergies: newUser.allergies || '',
+      chronicConditions: newUser.chronicConditions || '',
       licenseNumber: newUser.licenseNumber,
       department: newUser.department || 'General Medicine',
       id: newUser.id
@@ -150,7 +153,10 @@ export function AuthProvider({ children }) {
   }
 
   const updateUserProfile = (updatedFields) => {
-    if (!user) return
+    if (!user) {
+      localStorage.setItem('patient_profile_data', JSON.stringify(updatedFields))
+      return { success: true }
+    }
     const updatedUser = { ...user, ...updatedFields }
     setUser(updatedUser)
     localStorage.setItem('meditap_user', JSON.stringify(updatedUser))

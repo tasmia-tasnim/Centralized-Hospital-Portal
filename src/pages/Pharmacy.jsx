@@ -109,10 +109,6 @@ export default function Pharmacy() {
       {/* Pharmacy Hero Banner */}
       <section className="ph-hero">
         <div className="ph-hero-inner">
-          <div className="ph-hero-badge">
-            <span className="ph-dot-live"></span>
-            <span>{lang === 'bn' ? 'সেন্ট্রাল হসপিটাল ডিজিটাল ফার্মেসি' : 'Central Hospital Online Pharmacy'}</span>
-          </div>
           <h1 className="ph-hero-title">
             {lang === 'bn' ? 'জেনুইন ওষুধ ও হেলথকেয়ার সামগ্রী খুঁজুন' : 'Order Genuine Medicines & Healthcare Essentials'}
           </h1>

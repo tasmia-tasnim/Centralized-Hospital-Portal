@@ -1,4 +1,4 @@
-/* Patient Dashboard Styles matching user screenshot 2 */
+/* Patient Dashboard Styles */
 .pd-page {
   min-height: calc(100vh - 120px);
   background-color: #F8FAFC;
@@ -10,6 +10,31 @@
   margin: 0 auto;
 }
 
+/* Toast */
+.pd-toast {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  background: #ffffff;
+  border: 1px solid #dcfce7;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #166534;
+  z-index: 1100;
+  animation: pdSlide 0.3s ease;
+}
+
+@keyframes pdSlide {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 /* Welcome Header */
 .pd-welcome-header {
   display: flex;
@@ -18,6 +43,41 @@
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 24px;
+}
+
+.pd-welcome-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pd-blood-requests-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pd-blood-requests-btn:hover {
+  background: #FECACA;
+  transform: translateY(-1px);
+}
+
+.pd-blood-badge-pill {
+  background: #DC2626;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
 }
 
 .pd-welcome-title {
@@ -32,49 +92,22 @@
   color: #64748b;
 }
 
-.pd-quick-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.pd-header-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 600;
-  padding: 7px 14px;
-  border-radius: 8px;
-  transition: all 0.15s ease;
-}
-
-.pd-header-action-btn.pharmacy {
-  background: #EFF5F2;
-  color: #1B3C35;
-  border: 1px solid #d1fae5;
-}
-
-.pd-header-action-btn.pharmacy:hover {
-  background: #1B3C35;
-  color: #ffffff;
-}
-
-.pd-header-action-btn.doctor {
-  background: #ffffff;
-  color: #334155;
-  border: 1px solid #cbd5e1;
-}
-
-.pd-header-action-btn.doctor:hover {
-  background: #f8fafc;
-}
-
 /* Top Stat Cards Ribbon */
 .pd-stats-ribbon {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-bottom: 24px;
+}
+
+.pd-blood-popup {
+  max-width: 560px;
+}
+
+.pd-blood-modal-body {
+  padding: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .pd-stat-card {
@@ -142,7 +175,7 @@
 /* 2 Column Dashboard Grid */
 .pd-dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr 360px;
   gap: 24px;
   align-items: flex-start;
 }
@@ -195,6 +228,28 @@
   color: #0f172a;
 }
 
+.pd-med-actions-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pd-add-med-btn {
+  background: #1B3C35;
+  color: #ffffff;
+  border: none;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.pd-add-med-btn:hover {
+  background: #152E29;
+}
+
 .pd-card-action-link {
   font-size: 12px;
   font-weight: 600;
@@ -207,7 +262,118 @@
   text-decoration: underline;
 }
 
-/* Empty State Box matching screenshot */
+/* Blood Requests for You Card */
+.pd-blood-req-card {
+  border-left: 4px solid #DC2626;
+}
+
+.pd-blood-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pd-blood-req-item {
+  background: #FEF2F2;
+  border: 1px solid #FEE2E2;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pd-blood-req-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.pd-req-patient-name {
+  display: block;
+  font-size: 14px;
+  color: #991B1B;
+}
+
+.pd-req-hospital {
+  display: block;
+  font-size: 11.5px;
+  color: #64748B;
+}
+
+.pd-blood-group-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  background: #DC2626;
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.pd-blood-req-msg {
+  font-size: 12.5px;
+  color: #334155;
+  margin: 0;
+  line-height: 1.4;
+  font-style: italic;
+  background: #ffffff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #FEE2E2;
+}
+
+.pd-blood-req-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.pd-req-contact-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pd-req-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1B3C35;
+  background: #ffffff;
+  border: 1px solid #CBD5E1;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.pd-req-contact-link:hover {
+  background: #F8FAFC;
+}
+
+.pd-dismiss-req-btn {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748B;
+  background: #ffffff;
+  border: 1px solid #CBD5E1;
+  padding: 3px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pd-dismiss-req-btn:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+}
+
+/* Empty State Box */
 .pd-empty-box {
   background: #f8fafc;
   border: 1px solid #f1f5f9;
@@ -216,35 +382,11 @@
   text-align: left;
 }
 
-.pd-empty-box.center-aligned {
-  text-align: center;
-}
-
-.pd-empty-box.compact {
-  padding: 14px;
-}
-
 .pd-empty-text {
   font-size: 12.5px;
   color: #64748b;
   line-height: 1.5;
   margin: 0;
-}
-
-.pd-btn-primary {
-  background: #0B2238;
-  color: #ffffff;
-  font-size: 12.5px;
-  font-weight: 600;
-  padding: 8px 18px;
-  border-radius: 6px;
-  margin-top: 14px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.pd-btn-primary:hover {
-  background: #1B3C35;
 }
 
 /* Running Meds List */
@@ -291,6 +433,12 @@
   color: #94a3b8;
 }
 
+.pd-med-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .pd-med-reorder-btn {
   font-size: 11.5px;
   font-weight: 600;
@@ -299,83 +447,28 @@
   border: 1px solid #d1fae5;
   padding: 4px 10px;
   border-radius: 6px;
+  text-decoration: none;
 }
 
-/* Appointment List */
-.pd-apt-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.pd-apt-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-}
-
-.pd-apt-badge-cal {
-  background: #EFF5F2;
-  border: 1px solid #d1fae5;
+.pd-med-delete-btn {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #94a3b8;
+  width: 24px;
+  height: 24px;
   border-radius: 6px;
-  padding: 4px 8px;
-  text-align: center;
-  min-width: 48px;
-}
-
-.apt-month {
-  display: block;
-  font-size: 10px;
-  font-weight: 700;
-  color: #1B3C35;
-}
-
-.apt-day {
-  display: block;
-  font-size: 16px;
-  font-weight: 800;
-  color: #1B3C35;
-}
-
-.pd-apt-details {
-  flex: 1;
-}
-
-.pd-apt-header-line {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-}
-
-.pd-apt-doc {
-  font-size: 13.5px;
-  color: #0f172a;
-}
-
-.pd-apt-status-pill {
+  justify-content: center;
   font-size: 11px;
-  font-weight: 600;
-  background: #dcfce7;
-  color: #15803d;
-  padding: 2px 6px;
-  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.pd-apt-sub {
-  display: block;
-  font-size: 12px;
-  color: #64748b;
-}
-
-.pd-apt-time {
-  display: block;
-  font-size: 11.5px;
-  color: #334155;
-  margin-top: 2px;
+.pd-med-delete-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecdd3;
 }
 
 /* Vaccines */
@@ -435,80 +528,7 @@
   color: #0369a1;
 }
 
-/* Lab Previews */
-.pd-lab-preview-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.pd-lab-preview-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-}
-
-.pd-lab-left strong {
-  display: block;
-  font-size: 12.5px;
-  color: #0f172a;
-}
-
-.pd-lab-left span {
-  display: block;
-  font-size: 11px;
-  color: #64748b;
-}
-
-.pd-lab-status-badge {
-  font-size: 11px;
-  font-weight: 600;
-  background: #f1f5f9;
-  color: #475569;
-  padding: 3px 8px;
-  border-radius: 6px;
-}
-
-.pd-taka-icon {
-  font-weight: 800;
-  font-size: 18px;
-  color: #16A34A;
-}
-
-/* Right Column Cards */
-.pd-allergies-card {
-  border-top: 3px solid #FDA4AF;
-}
-
-.pd-condition-group {
-  margin-bottom: 8px;
-}
-
-.pd-condition-label {
-  display: block;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #64748b;
-  margin-bottom: 2px;
-}
-
-.pd-condition-val.muted {
-  font-size: 12px;
-  color: #94a3b8;
-  font-style: italic;
-}
-
-.pd-condition-divider {
-  height: 1px;
-  background: #f1f5f9;
-  margin: 10px 0;
-}
-
-/* Patient Info Card (Matching Screenshot) */
+/* Patient Info Card (Integrated Allergies & Chronic Conditions) */
 .pd-info-summary-card {
   background: #F8FAFC;
   border: 1px solid #e2e8f0;
@@ -517,7 +537,7 @@
 .pd-info-rows {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 18px;
 }
 
@@ -529,11 +549,20 @@
   line-height: 1.4;
 }
 
+.pd-info-row.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 6px 8px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 6px;
+}
+
 .pd-info-key {
   color: #64748b;
   font-weight: 600;
   flex-shrink: 0;
-  margin-right: 8px;
 }
 
 .pd-info-value {
@@ -545,6 +574,35 @@
 .pd-info-value.red-bold {
   color: #DC2626;
   font-weight: 700;
+}
+
+.pd-info-val-wrap {
+  width: 100%;
+}
+
+.pd-info-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.pd-info-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+}
+
+.pd-info-empty-muted {
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-style: italic;
 }
 
 .pd-update-profile-btn {
@@ -563,11 +621,154 @@
   background: #1B3C35;
 }
 
+/* ================= ADD MEDICATION MODAL ================= */
+.pd-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.pd-modal-content {
+  background: #ffffff;
+  border-radius: 14px;
+  max-width: 440px;
+  width: 100%;
+  padding: 22px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  animation: pdSlide 0.25s ease;
+}
+
+.pd-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pd-modal-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pd-modal-header-title h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.pd-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.pd-med-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pd-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pd-form-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.pd-form-field input {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.pd-form-field input:focus {
+  border-color: #1B3C35;
+  box-shadow: 0 0 0 3px rgba(27, 60, 53, 0.08);
+}
+
+.pd-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.pd-modal-cancel {
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+}
+
+.pd-modal-submit {
+  padding: 8px 18px;
+  background: #1B3C35;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.pd-modal-submit:hover {
+  background: #152E29;
+}
+
 @media (max-width: 960px) {
   .pd-stats-ribbon {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
   .pd-dashboard-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pd-main-container {
+    padding: 0 12px;
+  }
+  .pd-welcome-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .pd-welcome-title {
+    font-size: 19px;
+  }
+  .pd-card {
+    padding: 14px;
+  }
+  .pd-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
   }
 }

@@ -1,67 +1,75 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import { useAuth } from '../context/AuthContext'
 import './BloodDonorNetwork.css'
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
 
 export default function BloodDonorNetwork() {
   const { t, lang } = useLanguage()
+  const { user, login } = useAuth()
   const [selectedGroup, setSelectedGroup] = useState('All')
   const [activeSection, setActiveSection] = useState('search') // 'search' | 'emergency' | 'donor'
   const [emergencySubmitted, setEmergencySubmitted] = useState(false)
   const [donorSubmitted, setDonorSubmitted] = useState(false)
 
-  // Donors database showing only Name, Email, and Broad Location (e.g. Khilgaon, Dhanmondi)
-  const [donorsList, setDonorsList] = useState([
-    {
-      id: 1,
-      name: lang === 'bn' ? 'রহিম উদ্দিন' : 'Rahim Uddin',
-      email: 'rahim.uddin.donor@gmail.com',
-      group: 'O+',
-      broadLocation: lang === 'bn' ? 'খিলগাঁও, ঢাকা' : 'Khilgaon, Dhaka',
-      lastDonated: lang === 'bn' ? '৩ মাস আগে' : '3 months ago'
-    },
-    {
-      id: 2,
-      name: lang === 'bn' ? 'সুমাইয়া ইসলাম' : 'Sumaiya Islam',
-      email: 'sumaiya.isl.blood@gmail.com',
-      group: 'A+',
-      broadLocation: lang === 'bn' ? 'ধানমন্ডি, ঢাকা' : 'Dhanmondi, Dhaka',
-      lastDonated: lang === 'bn' ? '২ মাস আগে' : '2 months ago'
-    },
-    {
-      id: 3,
-      name: lang === 'bn' ? 'কামাল হোসেন' : 'Kamal Hossain',
-      email: 'kamal.hossain.donor@gmail.com',
-      group: 'B-',
-      broadLocation: lang === 'bn' ? 'মিরপুর, ঢাকা' : 'Mirpur, Dhaka',
-      lastDonated: lang === 'bn' ? '৪ মাস আগে' : '4 months ago'
-    },
-    {
-      id: 4,
-      name: lang === 'bn' ? 'ফারহান আহমেদ' : 'Farhan Ahmed',
-      email: 'farhan.ahmed.bd@gmail.com',
-      group: 'AB+',
-      broadLocation: lang === 'bn' ? 'উত্তরা, ঢাকা' : 'Uttara, Dhaka',
-      lastDonated: lang === 'bn' ? '২ মাস আগে' : '2 months ago'
-    },
-    {
-      id: 5,
-      name: lang === 'bn' ? 'তাসমিয়া তাসনিম' : 'Tasmia Tasnim',
-      email: 'tasmia.donor@gmail.com',
-      group: 'O-',
-      broadLocation: lang === 'bn' ? 'বনানী, ঢাকা' : 'Banani, Dhaka',
-      lastDonated: lang === 'bn' ? '৫ মাস আগে' : '5 months ago'
-    },
-    {
-      id: 6,
-      name: lang === 'bn' ? 'তানভীর হাসান' : 'Tanvir Hasan',
-      email: 'tanvir.hasan.blood@gmail.com',
-      group: 'A-',
-      broadLocation: lang === 'bn' ? 'মোহাম্মদপুর, ঢাকা' : 'Mohammadpur, Dhaka',
-      lastDonated: lang === 'bn' ? '১ মাস আগে' : '1 month ago'
+  // Donors database showing only Name, Email, and Broad Location
+  const [donorsList, setDonorsList] = useState(() => {
+    const saved = localStorage.getItem('hospital_registered_donors')
+    if (saved) {
+      try { return JSON.parse(saved) } catch (e) { console.error(e) }
     }
-  ])
+    return [
+      {
+        id: 1,
+        name: lang === 'bn' ? 'রহিম উদ্দিন' : 'Rahim Uddin',
+        email: 'rahim.uddin.donor@gmail.com',
+        group: 'O+',
+        broadLocation: lang === 'bn' ? 'খিলগাঁও, ঢাকা' : 'Khilgaon, Dhaka',
+        lastDonated: lang === 'bn' ? '৩ মাস আগে' : '3 months ago'
+      },
+      {
+        id: 2,
+        name: lang === 'bn' ? 'সুমাইয়া ইসলাম' : 'Sumaiya Islam',
+        email: 'sumaiya.isl.blood@gmail.com',
+        group: 'A+',
+        broadLocation: lang === 'bn' ? 'ধানমন্ডি, ঢাকা' : 'Dhanmondi, Dhaka',
+        lastDonated: lang === 'bn' ? '২ মাস আগে' : '2 months ago'
+      },
+      {
+        id: 3,
+        name: lang === 'bn' ? 'কামাল হোসেন' : 'Kamal Hossain',
+        email: 'kamal.hossain.donor@gmail.com',
+        group: 'B-',
+        broadLocation: lang === 'bn' ? 'মিরপুর, ঢাকা' : 'Mirpur, Dhaka',
+        lastDonated: lang === 'bn' ? '৪ মাস আগে' : '4 months ago'
+      },
+      {
+        id: 4,
+        name: lang === 'bn' ? 'ফারহান আহমেদ' : 'Farhan Ahmed',
+        email: 'farhan.ahmed.bd@gmail.com',
+        group: 'AB+',
+        broadLocation: lang === 'bn' ? 'উত্তরা, ঢাকা' : 'Uttara, Dhaka',
+        lastDonated: lang === 'bn' ? '২ মাস আগে' : '2 months ago'
+      },
+      {
+        id: 5,
+        name: lang === 'bn' ? 'তাসমিয়া তাসনিম' : 'Tasmia Tasnim',
+        email: 'tasmia.donor@gmail.com',
+        group: 'O-',
+        broadLocation: lang === 'bn' ? 'বনানী, ঢাকা' : 'Banani, Dhaka',
+        lastDonated: lang === 'bn' ? '৫ মাস আগে' : '5 months ago'
+      },
+      {
+        id: 6,
+        name: lang === 'bn' ? 'তানভীর হাসান' : 'Tanvir Hasan',
+        email: 'tanvir.hasan.blood@gmail.com',
+        group: 'A-',
+        broadLocation: lang === 'bn' ? 'মোহাম্মদপুর, ঢাকা' : 'Mohammadpur, Dhaka',
+        lastDonated: lang === 'bn' ? '১ মাস আগে' : '1 month ago'
+      }
+    ]
+  })
 
   // Website Chat / Request Modal State
   const [activeChatDonor, setActiveChatDonor] = useState(null)
@@ -70,7 +78,10 @@ export default function BloodDonorNetwork() {
   const [requestMessage, setRequestMessage] = useState('')
   const [patientDetails, setPatientDetails] = useState({
     patientName: '',
+    requesterEmail: '',
+    requesterPhone: '',
     hospital: '',
+    wardRoom: '',
     unitsNeeded: '1',
     urgency: 'Immediate'
   })
@@ -82,9 +93,45 @@ export default function BloodDonorNetwork() {
   const [emergencyForm, setEmergencyForm] = useState({
     patientName: '', contactPhone: '', bloodGroup: '', units: 1, location: ''
   })
+  
+  // Become a donor form (Auto-filled from logged-in user profile, fully editable)
   const [donorForm, setDonorForm] = useState({
-    name: '', email: '', bloodGroup: '', broadLocation: ''
+    name: '',
+    email: '',
+    phone: '',
+    bloodGroup: '',
+    broadLocation: ''
   })
+
+  // Synchronize form auto-fill if user logs in or updates profile
+  useEffect(() => {
+    if (user) {
+      setDonorForm(prev => ({
+        name: prev.name || user.name || '',
+        email: prev.email || user.email || '',
+        phone: prev.phone || user.phone || '',
+        bloodGroup: prev.bloodGroup || user.bloodGroup || 'O+',
+        broadLocation: prev.broadLocation || (user.address ? user.address.split(',')[0] : 'Dhanmondi, Dhaka')
+      }))
+      setPatientDetails(prev => ({
+        ...prev,
+        patientName: prev.patientName || user.name || '',
+        requesterEmail: prev.requesterEmail || user.email || '',
+        requesterPhone: prev.requesterPhone || user.phone || ''
+      }))
+    }
+  }, [user])
+
+  // Escape key handler to close contact modal easily
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && activeChatDonor) {
+        setActiveChatDonor(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeChatDonor])
 
   const handleOpenContactModal = (donor) => {
     setActiveChatDonor(donor)
@@ -92,11 +139,63 @@ export default function BloodDonorNetwork() {
     setIsApprovedByDonor(false)
     setRequestMessage('')
     setChatMessages([])
+    if (user) {
+      setPatientDetails(prev => ({
+        ...prev,
+        requesterEmail: user.email || '',
+        requesterPhone: user.phone || ''
+      }))
+    }
   }
 
   const handleSendInitialRequest = (e) => {
     e.preventDefault()
     if (!requestMessage.trim()) return
+
+    // 1. Dispatch blood request into localStorage for matching donors & dashboard notifications
+    const newRequest = {
+      id: `REQ-BLD-${Date.now()}`,
+      patientName: patientDetails.patientName || (user?.name || 'Patient'),
+      requesterEmail: patientDetails.requesterEmail || (user?.email || 'patient@centralhospital.bd'),
+      requesterPhone: patientDetails.requesterPhone || (user?.phone || '+880 1712-345678'),
+      hospital: patientDetails.hospital || 'Central Hospital',
+      wardRoom: patientDetails.wardRoom || 'Ward 3',
+      bloodGroup: activeChatDonor?.group || 'O+',
+      unitsNeeded: patientDetails.unitsNeeded || '1',
+      urgency: patientDetails.urgency || 'Immediate',
+      message: requestMessage.trim(),
+      targetDonorId: activeChatDonor?.id,
+      targetDonorName: activeChatDonor?.name,
+      createdAt: new Date().toISOString(),
+      status: 'Pending'
+    }
+
+    const currentRequests = JSON.parse(localStorage.getItem('blood_donor_requests') || '[]')
+    localStorage.setItem('blood_donor_requests', JSON.stringify([newRequest, ...currentRequests]))
+
+    // Add matching notification
+    const notifications = JSON.parse(localStorage.getItem('patient_notifications') || '[]')
+    notifications.unshift({
+      id: Date.now(),
+      type: 'blood_request',
+      title: `Urgent Blood Request for ${activeChatDonor?.group}`,
+      message: `${patientDetails.patientName || 'A patient'} urgently needs ${patientDetails.unitsNeeded} unit(s) of ${activeChatDonor?.group} blood at ${patientDetails.hospital}.`,
+      date: 'Just now',
+      unread: true
+    })
+    localStorage.setItem('patient_notifications', JSON.stringify(notifications))
+
+    // 2. If user is not logged in, auto-create frontend profile
+    if (!user && patientDetails.patientName) {
+      const newUser = {
+        name: patientDetails.patientName,
+        email: patientDetails.requesterEmail || 'patient@centralhospital.bd',
+        phone: patientDetails.requesterPhone || '+880 1712-000000',
+        role: 'patient'
+      }
+      localStorage.setItem('patient_profile_data', JSON.stringify(newUser))
+      if (login) login(newUser)
+    }
 
     setRequestSent(true)
 
@@ -114,12 +213,12 @@ export default function BloodDonorNetwork() {
           id: 2,
           sender: 'donor',
           text: lang === 'bn' 
-            ? `হ্যালো, আমি আপনার রক্তের অনুরোধটি পেয়েছি। আমি ${activeChatDonor.broadLocation}-এ আছি এবং রক্তদানে প্রস্তুত। কোন হাসপাতালে আসতে হবে?`
-            : `Hello, I received your blood request. I am in ${activeChatDonor.broadLocation} and ready to donate. Which hospital ward should I come to?`,
+            ? `হ্যালো, আমি আপনার রক্তের অনুরোধটি পেয়েছি (${patientDetails.patientName})। আমি প্রস্তুত, কোন ওয়ার্ডে আসব?`
+            : `Hello, I received your blood request for ${patientDetails.patientName}. I am ready to donate at ${patientDetails.hospital}.`,
           time: 'Just now'
         }
       ])
-    }, 1500)
+    }, 1200)
   }
 
   const handleSendMessage = (e) => {
@@ -149,7 +248,7 @@ export default function BloodDonorNetwork() {
           time: 'Just now'
         }
       ])
-    }, 2000)
+    }, 1800)
   }
 
   const handleEmergencySubmit = (e) => {
@@ -167,15 +266,33 @@ export default function BloodDonorNetwork() {
       id: Date.now(),
       name: donorForm.name,
       email: donorForm.email,
+      phone: donorForm.phone || '+880 1712-000000',
       group: donorForm.bloodGroup,
       broadLocation: donorForm.broadLocation,
       lastDonated: lang === 'bn' ? 'নতুন নিবন্ধিত' : 'Recently registered'
     }
 
-    setDonorsList(prev => [newDonor, ...prev])
+    const updated = [newDonor, ...donorsList]
+    setDonorsList(updated)
+    localStorage.setItem('hospital_registered_donors', JSON.stringify(updated))
+
+    // If user is not signed in, automatically create their account
+    if (!user) {
+      const newUser = {
+        name: donorForm.name,
+        email: donorForm.email,
+        phone: donorForm.phone || '+880 1712-000000',
+        bloodGroup: donorForm.bloodGroup,
+        address: donorForm.broadLocation,
+        role: 'donor'
+      }
+      localStorage.setItem('patient_profile_data', JSON.stringify(newUser))
+      if (login) login(newUser)
+    }
+
     setDonorSubmitted(true)
     setTimeout(() => setDonorSubmitted(false), 4000)
-    setDonorForm({ name: '', email: '', bloodGroup: '', broadLocation: '' })
+    setDonorForm({ name: '', email: '', phone: '', bloodGroup: '', broadLocation: '' })
   }
 
   return (
@@ -393,7 +510,12 @@ export default function BloodDonorNetwork() {
 
       {/* ================= WEBSITE BLOOD REQUEST & CHAT MODAL ================= */}
       {activeChatDonor && (
-        <div className="bdn-chat-modal-overlay">
+        <div 
+          className="bdn-chat-modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setActiveChatDonor(null)
+          }}
+        >
           <div className="bdn-chat-modal-card">
             
             {/* Modal Header */}
@@ -405,7 +527,13 @@ export default function BloodDonorNetwork() {
                   <span className="bdn-chat-meta">{activeChatDonor.group} Blood Donor • {activeChatDonor.broadLocation}</span>
                 </div>
               </div>
-              <button className="bdn-chat-close-btn" onClick={() => setActiveChatDonor(null)}>×</button>
+              <button 
+                className="bdn-chat-close-btn" 
+                onClick={() => setActiveChatDonor(null)}
+                title="Close modal (Esc)"
+              >
+                ✕
+              </button>
             </div>
 
             {/* Modal Content */}
@@ -426,21 +554,35 @@ export default function BloodDonorNetwork() {
                     </span>
                   </div>
 
-                  {/* Patient Details — organized into separate fields */}
+                  {/* Patient & Requester Details */}
                   <div className="bdn-req-section-label">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    {lang === 'bn' ? 'রোগীর তথ্য' : 'Patient Details'}
+                    {lang === 'bn' ? 'রোগী ও আবেদনকারীর তথ্য' : 'Patient & Requester Details'}
                   </div>
-                  <div className="bdn-form-group">
-                    <label className="bdn-label">{lang === 'bn' ? 'রোগীর নাম' : 'Patient Name'}</label>
-                    <input
-                      type="text"
-                      className="bdn-input"
-                      placeholder={lang === 'bn' ? 'যেমন: সাহেদ আহমেদ' : 'e.g. Shahed Ahmed'}
-                      value={patientDetails.patientName}
-                      onChange={e => setPatientDetails({...patientDetails, patientName: e.target.value})}
-                      required
-                    />
+                  
+                  <div className="bdn-form-row-2">
+                    <div className="bdn-form-group">
+                      <label className="bdn-label">{lang === 'bn' ? 'রোগীর নাম' : 'Patient Name'}</label>
+                      <input
+                        type="text"
+                        className="bdn-input"
+                        placeholder={lang === 'bn' ? 'যেমন: সাহেদ আহমেদ' : 'e.g. Shahed Ahmed'}
+                        value={patientDetails.patientName}
+                        onChange={e => setPatientDetails({...patientDetails, patientName: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div className="bdn-form-group">
+                      <label className="bdn-label">{lang === 'bn' ? 'আবেদনকারীর ইমেইল' : 'Requester Email'}</label>
+                      <input
+                        type="email"
+                        className="bdn-input"
+                        placeholder="e.g. requester@example.com"
+                        value={patientDetails.requesterEmail}
+                        onChange={e => setPatientDetails({...patientDetails, requesterEmail: e.target.value})}
+                        required
+                      />
+                    </div>
                   </div>
 
                   {/* Hospital Details — separate section */}

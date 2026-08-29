@@ -17,8 +17,11 @@ export default function PatientProfile() {
   const [gender, setGender] = useState('Female')
   const [address, setAddress] = useState('')
   const [emergencyContact, setEmergencyContact] = useState('')
+  const [allergies, setAllergies] = useState('Penicillin, Dust')
+  const [chronicConditions, setChronicConditions] = useState('Asthma (Mild)')
 
-  // Change Password States
+  // Change Password States & Accordion Toggle
+  const [isChangePwOpen, setIsChangePwOpen] = useState(false)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -38,6 +41,8 @@ export default function PatientProfile() {
     setGender(initialData.gender || 'Female')
     setAddress(initialData.address || 'House 42, Road 11, Dhanmondi, Dhaka')
     setEmergencyContact(initialData.emergencyContact || '+880 1819-998877')
+    setAllergies(initialData.allergies !== undefined ? initialData.allergies : 'Penicillin, Dust')
+    setChronicConditions(initialData.chronicConditions !== undefined ? initialData.chronicConditions : 'Asthma (Mild)')
   }, [user])
 
   const handleSaveProfile = (e) => {
@@ -50,7 +55,9 @@ export default function PatientProfile() {
       age,
       gender,
       address,
-      emergencyContact
+      emergencyContact,
+      allergies,
+      chronicConditions
     }
     
     if (updateUserProfile) {
@@ -88,6 +95,36 @@ export default function PatientProfile() {
     setTimeout(() => setPwMessage({ type: '', text: '' }), 4000)
   }
 
+  // Quick tag addition helper
+  const addTag = (currentVal, setVal, tagToAdd) => {
+    if (!isEditing) return
+    const currentList = currentVal.split(',').map(s => s.trim()).filter(Boolean)
+    if (!currentList.includes(tagToAdd)) {
+      const updated = currentList.length > 0 ? `${currentVal.trim()}, ${tagToAdd}` : tagToAdd
+      setVal(updated)
+    }
+  }
+
+  // Render neutral tag pills
+  const renderNeutralPills = (str) => {
+    if (!str || !str.trim()) {
+      return <span className="pp-empty-pill-text">{lang === 'bn' ? 'কোনো রেকর্ড নেই' : 'None listed'}</span>
+    }
+    return (
+      <div className="pp-neutral-pills-wrap">
+        {str.split(',').map((s, idx) => {
+          const item = s.trim()
+          if (!item) return null
+          return (
+            <span key={idx} className="pp-neutral-pill">
+              {item}
+            </span>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <div className="pp-page">
       {/* Toast */}
@@ -100,7 +137,7 @@ export default function PatientProfile() {
         </div>
       )}
 
-      {/* Hero Banner matching screenshot */}
+      {/* Hero Banner */}
       <section className="pp-hero">
         <div className="pp-hero-inner">
           <h1 className="pp-hero-title">
@@ -155,6 +192,14 @@ export default function PatientProfile() {
 
           {/* Form Fields Grid */}
           <form onSubmit={handleSaveProfile} className="pp-form-grid">
+            {/* Subsection 1: Personal Details */}
+            <div className="pp-section-heading-row full-row">
+              <span className="pp-section-badge">1</span>
+              <h3 className="pp-section-heading-text">
+                {lang === 'bn' ? 'ব্যক্তিগত তথ্য' : 'Personal Details'}
+              </h3>
+            </div>
+
             {/* 1. Full Name */}
             <div className="pp-form-group">
               <label className="pp-label">{lang === 'bn' ? 'পূর্ণ নাম' : 'Full Name'}</label>
@@ -327,6 +372,123 @@ export default function PatientProfile() {
               </div>
             </div>
 
+            {/* Subsection 2: Medical History (Allergies & Chronic Conditions - Calm Neutral Colors) */}
+            <div className="pp-section-heading-row full-row" style={{ marginTop: '16px' }}>
+              <span className="pp-section-badge">2</span>
+              <div className="pp-section-title-wrap">
+                <h3 className="pp-section-heading-text">
+                  {lang === 'bn' ? 'অ্যালার্জি ও স্বাস্থ্য অবস্থা' : 'Allergies & Chronic Conditions'}
+                </h3>
+                <span className="pp-section-subtitle">
+                  {lang === 'bn' 
+                    ? 'আপনার ড্যাশবোর্ড ও ক্লিনিক্যাল রেকর্ডে সংরক্ষিত তথ্য' 
+                    : 'Synced directly with your patient portal summary'}
+                </span>
+              </div>
+            </div>
+
+            {/* 9. Allergies */}
+            <div className="pp-form-group full-row">
+              <div className="pp-label-row">
+                <label className="pp-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                  <span>{lang === 'bn' ? 'অ্যালার্জি (Allergies)' : 'Allergies'}</span>
+                </label>
+                <span className="pp-label-hint">
+                  {lang === 'bn' ? '(কমা দিয়ে আলাদা করুন)' : '(Comma separated)'}
+                </span>
+              </div>
+
+              <div className={`pp-input-wrap ${isEditing ? 'editable' : 'readonly'}`}>
+                <span className="pp-input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  className="pp-input" 
+                  placeholder={lang === 'bn' ? 'যেমন: Penicillin, Dust, Peanuts' : 'e.g., Penicillin, Dust, Peanuts'}
+                  value={allergies}
+                  onChange={(e) => setAllergies(e.target.value)}
+                  readOnly={!isEditing}
+                />
+              </div>
+
+              {/* Quick Suggestion Chips when editing */}
+              {isEditing && (
+                <div className="pp-chips-row">
+                  <div className="pp-quick-chips">
+                    <span className="pp-chips-intro">{lang === 'bn' ? 'দ্রুত নির্বাচন:' : 'Quick add:'}</span>
+                    {['Penicillin', 'Peanuts', 'Dust', 'Sulfa Drugs', 'Latex'].map(item => (
+                      <button 
+                        key={item} 
+                        type="button" 
+                        className="pp-chip-btn"
+                        onClick={() => addTag(allergies, setAllergies, item)}
+                      >
+                        + {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 10. Chronic Conditions */}
+            <div className="pp-form-group full-row">
+              <div className="pp-label-row">
+                <label className="pp-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                  </svg>
+                  <span>{lang === 'bn' ? 'দীর্ঘস্থায়ী রোগ (Chronic Conditions)' : 'Chronic Conditions'}</span>
+                </label>
+                <span className="pp-label-hint">
+                  {lang === 'bn' ? '(কমা দিয়ে আলাদা করুন)' : '(Comma separated)'}
+                </span>
+              </div>
+
+              <div className={`pp-input-wrap ${isEditing ? 'editable' : 'readonly'}`}>
+                <span className="pp-input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  className="pp-input" 
+                  placeholder={lang === 'bn' ? 'যেমন: Asthma, Hypertension, Diabetes' : 'e.g., Asthma (Mild), Hypertension, Diabetes'}
+                  value={chronicConditions}
+                  onChange={(e) => setChronicConditions(e.target.value)}
+                  readOnly={!isEditing}
+                />
+              </div>
+
+              {/* Quick Suggestion Chips when editing */}
+              {isEditing && (
+                <div className="pp-chips-row">
+                  <div className="pp-quick-chips">
+                    <span className="pp-chips-intro">{lang === 'bn' ? 'দ্রুত নির্বাচন:' : 'Quick add:'}</span>
+                    {['Asthma', 'Hypertension', 'Diabetes', 'Thyroid', 'Migraine'].map(item => (
+                      <button 
+                        key={item} 
+                        type="button" 
+                        className="pp-chip-btn"
+                        onClick={() => addTag(chronicConditions, setChronicConditions, item)}
+                      >
+                        + {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {isEditing && (
               <div className="pp-save-actions full-row">
                 <button type="button" className="pp-cancel-btn" onClick={() => setIsEditing(false)}>
@@ -340,70 +502,104 @@ export default function PatientProfile() {
           </form>
         </div>
 
-        {/* Change Password Card */}
+        {/* Change Password Card - Expandable / Collapsible Accordion */}
         <div className="pp-card pp-pw-card">
-          <div className="pp-card-title-row">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e293b" strokeWidth="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-            <h3 className="pp-card-heading">{lang === 'bn' ? 'পাসওয়ার্ড পরিবর্তন করুন' : 'Change Password'}</h3>
+          <div 
+            className="pp-card-title-row clickable"
+            onClick={() => setIsChangePwOpen(!isChangePwOpen)}
+          >
+            <div className="pp-pw-title-left">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e293b" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <div>
+                <h3 className="pp-card-heading">{lang === 'bn' ? 'পাসওয়ার্ড পরিবর্তন করুন' : 'Change Password'}</h3>
+                <span className="pp-card-subheading">
+                  {lang === 'bn' 
+                    ? 'আপনার অ্যাকাউন্টের নিরাপত্তা পাসওয়ার্ড আপডেট করতে ক্লিক করুন' 
+                    : 'Click to expand and update your security password'}
+                </span>
+              </div>
+            </div>
+            
+            <button 
+              type="button" 
+              className="pp-accordion-toggle-btn"
+            >
+              <span>{isChangePwOpen ? (lang === 'bn' ? 'বন্ধ করুন' : 'Close') : (lang === 'bn' ? 'পাসওয়ার্ড পরিবর্তন' : 'Change Password')}</span>
+              <svg 
+                className={`pp-chevron ${isChangePwOpen ? 'open' : ''}`} 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2"
+              >
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
           </div>
 
-          {pwMessage.text && (
-            <div className={`pp-pw-alert ${pwMessage.type}`}>
-              {pwMessage.text}
+          {isChangePwOpen && (
+            <div className="pp-pw-expanded-content">
+              {pwMessage.text && (
+                <div className={`pp-pw-alert ${pwMessage.type}`}>
+                  {pwMessage.text}
+                </div>
+              )}
+
+              <form onSubmit={handleUpdatePassword} className="pp-pw-form">
+                <div className="pp-form-group">
+                  <label className="pp-label">{lang === 'bn' ? 'বর্তমান পাসওয়ার্ড' : 'Current Password'}</label>
+                  <div className="pp-input-wrap">
+                    <input 
+                      type="password" 
+                      className="pp-input no-icon" 
+                      placeholder="••••••••"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="pp-pw-row">
+                  <div className="pp-form-group">
+                    <label className="pp-label">{lang === 'bn' ? 'নতুন পাসওয়ার্ড' : 'New Password'}</label>
+                    <div className="pp-input-wrap">
+                      <input 
+                        type="password" 
+                        className="pp-input no-icon" 
+                        placeholder={lang === 'bn' ? 'ন্যূনতম ৬ অক্ষর' : 'Min 6 characters'}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pp-form-group">
+                    <label className="pp-label">{lang === 'bn' ? 'নতুন পাসওয়ার্ড নিশ্চিত করুন' : 'Confirm New Password'}</label>
+                    <div className="pp-input-wrap">
+                      <input 
+                        type="password" 
+                        className="pp-input no-icon" 
+                        placeholder={lang === 'bn' ? 'পুনরায় নতুন পাসওয়ার্ড লিখুন' : 'Re-enter new password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pp-pw-btn-row">
+                  <button type="submit" className="pp-update-pw-btn">
+                    {lang === 'bn' ? 'পাসওয়ার্ড আপডেট করুন' : 'Update Password'}
+                  </button>
+                </div>
+              </form>
             </div>
           )}
-
-          <form onSubmit={handleUpdatePassword} className="pp-pw-form">
-            <div className="pp-form-group">
-              <label className="pp-label">{lang === 'bn' ? 'বর্তমান পাসওয়ার্ড' : 'Current Password'}</label>
-              <div className="pp-input-wrap">
-                <input 
-                  type="password" 
-                  className="pp-input no-icon" 
-                  placeholder="••••••••"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="pp-pw-row">
-              <div className="pp-form-group">
-                <label className="pp-label">{lang === 'bn' ? 'নতুন পাসওয়ার্ড' : 'New Password'}</label>
-                <div className="pp-input-wrap">
-                  <input 
-                    type="password" 
-                    className="pp-input no-icon" 
-                    placeholder={lang === 'bn' ? 'ন্যূনতম ৬ অক্ষর' : 'Min 6 characters'}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="pp-form-group">
-                <label className="pp-label">{lang === 'bn' ? 'নতুন পাসওয়ার্ড নিশ্চিত করুন' : 'Confirm New Password'}</label>
-                <div className="pp-input-wrap">
-                  <input 
-                    type="password" 
-                    className="pp-input no-icon" 
-                    placeholder={lang === 'bn' ? 'পুনরায় নতুন পাসওয়ার্ড লিখুন' : 'Re-enter new password'}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="pp-pw-btn-row">
-              <button type="submit" className="pp-update-pw-btn">
-                {lang === 'bn' ? 'পাসওয়ার্ড আপডেট করুন' : 'Update Password'}
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     </div>

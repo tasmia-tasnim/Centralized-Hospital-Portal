@@ -385,13 +385,14 @@
 .bdn-chat-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.6);
+  background-color: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  padding: 20px;
+  z-index: 9999;
+  padding: 16px;
+  overflow-y: auto;
   animation: bdnFadeIn 0.2s ease-out;
 }
 
@@ -403,21 +404,27 @@
 .bdn-chat-modal-card {
   width: 100%;
   max-width: 520px;
+  max-height: calc(100vh - 32px);
   background: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin: auto;
 }
 
 .bdn-chat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 14px 20px;
   background-color: #1B3C35;
   color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .bdn-chat-header-info {
@@ -449,16 +456,31 @@
 }
 
 .bdn-chat-close-btn {
-  background: none;
+  background: rgba(255, 255, 255, 0.15);
   border: none;
   color: #ffffff;
-  font-size: 24px;
+  font-size: 18px;
   cursor: pointer;
   line-height: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.bdn-chat-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
 }
 
 .bdn-chat-body {
   padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+  max-height: calc(100vh - 110px);
 }
 
 .bdn-request-form {

@@ -13,23 +13,31 @@ export default function Footer() {
             <p className="footer-text">@centralhospital.bd</p>
           </div>
           <div className="footer-col">
-            <h4 className="footer-col-title">Patient Services</h4>
-            <Link to="/medical-record" className="footer-link">Medical Record</Link>
-            <Link to="/" className="footer-link">Book an Appoinment</Link>
+            <Link to="/patient-services" className="footer-col-title-link">
+              <h4 className="footer-col-title">Patient Services →</h4>
+            </Link>
+            <Link to="/book-appointment" className="footer-link">Book an Appointment</Link>
+            <Link to="/find-doctor" className="footer-link">Find a Specialist</Link>
+            <Link to="/medical-record" className="footer-link">Medical Records</Link>
+            <Link to="/symptom-checker" className="footer-link">Symptom Checker</Link>
+            <Link to="/vaccination-planner" className="footer-link">Vaccination Planner</Link>
+            <Link to="/pharmacy" className="footer-link">Pharmacy & Refill</Link>
+          </div>
+          <div className="footer-col">
+            <h4 className="footer-col-title">Hospital Facilities</h4>
+            <Link to="/find-doctor" className="footer-link">Clinical Departments</Link>
             <Link to="/bed-availability" className="footer-link">Bed Availability</Link>
-            <Link to="/blood-bank" className="footer-link">Blood Donor Network</Link>
+            <Link to="/blood-donor-network" className="footer-link">Blood Donor Network</Link>
+            <Link to="/pricing-directory" className="footer-link">Pricing Directory</Link>
+            <Link to="/ambulance-service" className="footer-link">24/7 Ambulance Service</Link>
           </div>
           <div className="footer-col">
-            <h4 className="footer-col-title">Hospital</h4>
-            <Link to="/" className="footer-link">Departments</Link>
-            <Link to="/" className="footer-link">Find a Doctor</Link>
-            <Link to="/pricing" className="footer-link">Pricing Directory</Link>
-          </div>
-          <div className="footer-col">
-            <h4 className="footer-col-title">Support</h4>
-            <Link to="/" className="footer-link">Contact Us</Link>
-            <Link to="/" className="footer-link">Accessibility</Link>
-            <Link to="/" className="footer-link">Privacy Policy</Link>
+            <h4 className="footer-col-title">Help & Support</h4>
+            <Link to="/auth?mode=login" className="footer-link">Patient Portal Login</Link>
+            <a href="tel:10666" className="footer-link">Emergency Call (10666)</a>
+            <span className="footer-text">Help Desk: 8:00 AM - 10:00 PM</span>
+            <span className="footer-text">Email: care@centralhospital.bd</span>
+            <span className="footer-text">Patient Rights & Privacy</span>
           </div>
         </div>
         <div className="footer-bottom">

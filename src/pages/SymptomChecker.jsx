@@ -179,20 +179,52 @@ export default function SymptomChecker() {
     }))
   }
 
-  // Matched Department and Doctors
-  const recommendedDeptKey = useMemo(() => {
-    if (selectedSymptomIds.includes('chest_pain') || selectedSymptomIds.includes('shortness_of_breath')) return 'cardiology'
-    if (selectedSymptomIds.includes('headache') || selectedSymptomIds.includes('dizziness')) return 'neurology'
-    if (selectedSymptomIds.includes('ear_pain')) return 'ent'
-    if (selectedSymptomIds.includes('joint_pain')) return 'orthopedics'
-    return 'internal medicine'
-  }, [selectedSymptomIds])
+  // Dynamic Matched Department & Specialists based on active symptoms and weighted severity
+  const departmentInfoMap = {
+    'cardiology': { en: 'Cardiology & Heart Care', bn: 'কার্ডিওলজি ও হৃদরোগ বিভাগ' },
+    'cardiac surgery': { en: 'Cardiac Surgery', bn: 'কার্ডিয়াক সার্জারি' },
+    'neurology': { en: 'Neurology & Stroke Care', bn: 'নিউরোলজি ও স্নায়ুরোগ বিভাগ' },
+    'ent': { en: 'ENT (Ear, Nose, Throat)', bn: 'ইএনটি (নাক, কান, গলা বিভাগ)' },
+    'orthopedics': { en: 'Orthopedics & Joint Care', bn: 'অর্থোপেডিক্স ও জয়েন্ট কেয়ার' },
+    'dermatology': { en: 'Dermatology & Skin Care', bn: 'চর্ম ও যৌনরোগ বিভাগ' },
+    'internal medicine': { en: 'Internal Medicine & Physician', bn: 'ইন্টারনাল মেডিসিন বিভাগ' }
+  }
+
+  const { recommendedDeptKey, dynamicSpecialtyName } = useMemo(() => {
+    if (selectedSymptomIds.length === 0) {
+      return { recommendedDeptKey: 'internal medicine', dynamicSpecialtyName: departmentInfoMap['internal medicine'] }
+    }
+
+    const deptScores = {}
+    selectedSymptomIds.forEach(id => {
+      const symp = allSymptoms.find(s => s.id === id)
+      if (!symp) return
+      const targetDept = symp.deptKey || 'internal medicine'
+      const weight = (symptomDetails[id]?.severity || 3) + (symp.isCountable ? 2 : 1)
+      deptScores[targetDept] = (deptScores[targetDept] || 0) + weight
+    })
+
+    let topDept = 'internal medicine'
+    let maxScore = -1
+    Object.entries(deptScores).forEach(([dept, score]) => {
+      if (score > maxScore) {
+        maxScore = score
+        topDept = dept
+      }
+    })
+
+    return {
+      recommendedDeptKey: topDept,
+      dynamicSpecialtyName: departmentInfoMap[topDept] || { en: 'Specialist Consultation', bn: 'বিশেষজ্ঞ কনসালটেশন' }
+    }
+  }, [selectedSymptomIds, symptomDetails, allSymptoms])
 
   const matchedDoctors = useMemo(() => {
-    return DOCTORS_DATA
-      .filter(d => d.deptKey === recommendedDeptKey || d.deptKey === 'internal medicine')
-      .slice(0, 3)
-      .map(d => getLocalizedDoctor(d, lang))
+    const primaryDocs = DOCTORS_DATA.filter(d => d.deptKey === recommendedDeptKey)
+    const fallbackDocs = DOCTORS_DATA.filter(d => d.deptKey === 'internal medicine')
+    const combined = [...primaryDocs, ...fallbackDocs]
+    const unique = Array.from(new Map(combined.map(d => [d.id, d])).values())
+    return unique.slice(0, 3).map(d => getLocalizedDoctor(d, lang))
   }, [recommendedDeptKey, lang])
 
   return (
@@ -371,13 +403,9 @@ export default function SymptomChecker() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="sc-rec-badge">{lang === 'bn' ? 'পরামর্শকৃত বিভাগ' : 'RECOMMENDED SPECIALTY'}</h4>
+                    <h4 className="sc-rec-badge">{lang === 'bn' ? 'পরামর্শকৃত বিশেষায়িত বিভাগ' : 'RECOMMENDED SPECIALTY'}</h4>
                     <h2 className="sc-rec-dept-title">
-                      {recommendedDeptKey === 'neurology' ? (lang === 'bn' ? 'নিউরোলজি / মেডিসিন' : 'Neurology & Medicine') :
-                       recommendedDeptKey === 'cardiology' ? (lang === 'bn' ? 'কার্ডিওলজি' : 'Cardiology') :
-                       recommendedDeptKey === 'ent' ? (lang === 'bn' ? 'ইএনটি (নাক, কান, গলা)' : 'ENT Specialist') :
-                       recommendedDeptKey === 'orthopedics' ? (lang === 'bn' ? 'অর্থোপেডিক্স' : 'Orthopedics') :
-                       (lang === 'bn' ? 'ইন্টারনাল মেডিসিন / জেনারেল ফিজিশিয়ান' : 'Internal Medicine')}
+                      {lang === 'bn' ? dynamicSpecialtyName.bn : dynamicSpecialtyName.en}
                     </h2>
                   </div>
                 </div>

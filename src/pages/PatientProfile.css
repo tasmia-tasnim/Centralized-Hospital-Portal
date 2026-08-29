@@ -1,4 +1,4 @@
-/* Patient Profile Page Styles matching Central Hospital Emerald theme */
+/* Patient Profile Page Styles */
 .pp-page {
   min-height: calc(100vh - 120px);
   background-color: #F8FAFC;
@@ -30,7 +30,7 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* Central Hospital Theme Banner Header (Forest Emerald Green) */
+/* Hero Header */
 .pp-hero {
   background: #1B3C35;
   color: #ffffff;
@@ -152,6 +152,46 @@
   gap: 18px;
 }
 
+/* Section Headings */
+.pp-section-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pp-section-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #EFF5F2;
+  color: #1B3C35;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid #d1fae5;
+}
+
+.pp-section-title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.pp-section-heading-text {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.pp-section-subtitle {
+  font-size: 11px;
+  color: #64748b;
+}
+
 .pp-form-group {
   display: flex;
   flex-direction: column;
@@ -162,10 +202,24 @@
   grid-column: span 2;
 }
 
+.pp-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .pp-label {
   font-size: 12px;
   font-weight: 600;
   color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pp-label-hint {
+  font-size: 11px;
+  color: #94a3b8;
 }
 
 .pp-input-wrap {
@@ -231,11 +285,70 @@
   align-items: center;
 }
 
+/* Neutral Chips & Pills (Non-Vibrant) */
+.pp-chips-row {
+  margin-top: 2px;
+}
+
+.pp-quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.pp-chips-intro {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.pp-chip-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pp-chip-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.pp-neutral-pills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.pp-neutral-pill {
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+.pp-empty-pill-text {
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
 .pp-save-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .pp-cancel-btn {
@@ -245,6 +358,8 @@
   font-size: 12.5px;
   font-weight: 500;
   color: #475569;
+  background: #ffffff;
+  cursor: pointer;
 }
 
 .pp-submit-save-btn {
@@ -254,6 +369,7 @@
   border-radius: 8px;
   font-size: 12.5px;
   font-weight: 600;
+  cursor: pointer;
   transition: background 0.15s ease;
 }
 
@@ -261,22 +377,71 @@
   background: #152E29;
 }
 
-/* Change Password Card */
+/* Change Password Card (Expandable Accordion) */
 .pp-pw-card {
-  padding: 22px 26px;
+  padding: 18px 22px;
+  transition: all 0.2s ease;
 }
 
-.pp-card-title-row {
+.pp-card-title-row.clickable {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pp-pw-title-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 12px;
 }
 
 .pp-card-heading {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+.pp-card-subheading {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.pp-accordion-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #1B3C35;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pp-accordion-toggle-btn:hover {
+  background: #EFF5F2;
+  border-color: #d1fae5;
+}
+
+.pp-chevron {
+  transition: transform 0.2s ease;
+}
+
+.pp-chevron.open {
+  transform: rotate(180deg);
+}
+
+.pp-pw-expanded-content {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  animation: ppSlide 0.2s ease;
 }
 
 .pp-pw-alert {
@@ -335,5 +500,10 @@
   }
   .pp-form-group.full-row {
     grid-column: span 1;
+  }
+  .pp-card-title-row.clickable {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }

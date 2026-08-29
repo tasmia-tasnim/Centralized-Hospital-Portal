@@ -23,11 +23,22 @@
   gap: 8px;
 }
 
+.footer-col-title-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+
+.footer-col-title-link:hover .footer-col-title {
+  color: var(--color-primary);
+}
+
 .footer-col-title {
   font-size: 14px;
   font-weight: 700;
   color: var(--color-text-primary);
   margin-bottom: 4px;
+  transition: color 0.2s ease;
 }
 
 .footer-text {

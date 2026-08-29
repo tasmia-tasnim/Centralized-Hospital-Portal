@@ -141,12 +141,7 @@ export default function Navbar() {
               {t('home')}
             </Link>
 
-            {/* Find Doctor */}
-            <Link to="/find-doctor" className={`navbar-link ${location.pathname === '/find-doctor' ? 'active' : ''}`} onClick={closeMenu}>
-              {t('findDoctor')}
-            </Link>
-
-            {/* Departments Dropdown */}
+            {/* Departments Dropdown (Navigates to dedicated department specialist pages) */}
             <div className={`navbar-dropdown group ${deptDropdownOpen ? 'open' : ''}`}>
               <span className="navbar-link" onClick={() => setDeptDropdownOpen(!deptDropdownOpen)}>
                 {t('departments')}
@@ -155,13 +150,33 @@ export default function Navbar() {
                 </svg>
               </span>
               <div className="navbar-dropdown-menu">
-                <Link to="/find-doctor?dept=cardiac%20surgery" className="navbar-dropdown-item" onClick={closeMenu}>Cardiac Surgery</Link>
-                <Link to="/find-doctor?dept=cardiology" className="navbar-dropdown-item" onClick={closeMenu}>Cardiology</Link>
-                <Link to="/find-doctor?dept=ent" className="navbar-dropdown-item" onClick={closeMenu}>ENT (Ear, Nose, Throat)</Link>
-                <Link to="/find-doctor?dept=neurology" className="navbar-dropdown-item" onClick={closeMenu}>Neurology</Link>
-                <Link to="/find-doctor?dept=orthopedics" className="navbar-dropdown-item" onClick={closeMenu}>Orthopedics</Link>
-                <Link to="/find-doctor?dept=pediatrics" className="navbar-dropdown-item" onClick={closeMenu}>Pediatrics</Link>
-                <Link to="/find-doctor?dept=oncology" className="navbar-dropdown-item" onClick={closeMenu}>Oncology</Link>
+                <Link to="/find-doctor?dept=cardiac surgery" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'কার্ডিয়াক সার্জারি' : 'Cardiac Surgery'}
+                </Link>
+                <Link to="/find-doctor?dept=cardiology" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'কার্ডিওলজি' : 'Cardiology'}
+                </Link>
+                <Link to="/find-doctor?dept=ent" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'ইএনটি (নাক, কান, গলা)' : 'ENT (Ear, Nose, Throat)'}
+                </Link>
+                <Link to="/find-doctor?dept=neurology" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'নিউরোলজি' : 'Neurology'}
+                </Link>
+                <Link to="/find-doctor?dept=orthopedics" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'অর্থোপেডিক্স' : 'Orthopedics'}
+                </Link>
+                <Link to="/find-doctor?dept=pediatrics" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'শিশু বিভাগ' : 'Pediatrics'}
+                </Link>
+                <Link to="/find-doctor?dept=oncology" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'অনকোলজি' : 'Oncology'}
+                </Link>
+                <Link to="/find-doctor?dept=internal medicine" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'ইন্টারনাল মেডিসিন' : 'Internal Medicine'}
+                </Link>
+                <Link to="/find-doctor?dept=gynecology" className="navbar-dropdown-item" onClick={closeMenu}>
+                  {lang === 'bn' ? 'স্ত্রীরোগ ও প্রসূতিবিদ্যা' : 'Gynecology & Obstetrics'}
+                </Link>
               </div>
             </div>
 

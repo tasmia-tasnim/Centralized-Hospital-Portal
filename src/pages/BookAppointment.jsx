@@ -7,7 +7,7 @@ import './BookAppointment.css'
 
 export default function BookAppointment() {
   const { lang } = useLanguage()
-  const { user } = useAuth()
+  const { user, login } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const deptQuery = searchParams.get('dept')
@@ -236,7 +236,7 @@ export default function BookAppointment() {
     const serialNumber = `SN-2026${preferredDate.replace(/\//g, '')}-${Math.floor(1000 + Math.random() * 9000)}`
     const bookingId = `APT-${Math.floor(10000 + Math.random() * 90000)}`
 
-    setAppointmentDetails({
+    const newBooking = {
       id: bookingId,
       serial: serialNumber,
       doctor: selectedDoctor,
@@ -247,7 +247,33 @@ export default function BookAppointment() {
       time: preferredTime,
       room: selectedDoctor.room,
       fee: selectedDoctor.fee
-    })
+    }
+
+    setAppointmentDetails(newBooking)
+
+    // 1. Save to patient_appointments in localStorage
+    const currentApts = JSON.parse(localStorage.getItem('patient_appointments') || '[]')
+    localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...currentApts]))
+
+    // 2. Also register treatment record for doctor rating unlock
+    const treatments = JSON.parse(localStorage.getItem('completed_treatments') || '[]')
+    if (!treatments.includes(selectedDoctor.id)) {
+      localStorage.setItem('completed_treatments', JSON.stringify([...treatments, selectedDoctor.id]))
+    }
+
+    // 3. If guest user, create frontend account
+    if (!user && patientName) {
+      const newUser = {
+        name: patientName,
+        email: emailAddress || 'patient@centralhospital.bd',
+        phone: contactNumber,
+        bloodGroup: 'O+',
+        role: 'patient'
+      }
+      localStorage.setItem('patient_profile_data', JSON.stringify(newUser))
+      if (login) login(newUser)
+    }
+
     setIsSubmitted(true)
   }
 

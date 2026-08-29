@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { useAuth } from '../context/AuthContext'
 import { DOCTORS_DATA, getLocalizedDoctor } from '../data/doctorsData'
@@ -19,53 +19,35 @@ export default function DoctorProfile() {
     return getLocalizedDoctor(rawDoctor, lang)
   }, [rawDoctor, lang])
 
-  const relatedDoctors = useMemo(() => {
-    return DOCTORS_DATA
-      .filter(d => d.deptKey === rawDoctor.deptKey && d.id !== rawDoctor.id)
-      .slice(0, 3)
-      .map(d => getLocalizedDoctor(d, lang))
-  }, [rawDoctor, lang])
+  const [expandedBio, setExpandedBio] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
-  // Doctor Reviews State
-  const [reviewsList, setReviewsList] = useState([
-    {
-      id: 1,
-      author: 'Kabir Hossain',
-      date: '18 Aug 2026',
-      rating: 5,
-      comment: 'Excellent doctor. Listened very carefully to all my symptoms and prescribed clear medicines. Feeling much better.'
-    },
-    {
-      id: 2,
-      author: 'Fatema Begum',
-      date: '10 Aug 2026',
-      rating: 5,
-      comment: 'Very professional behavior and thorough cardiac evaluation. Highly recommended specialist.'
-    }
-  ])
-
-  // Check if current user has been treated by this doctor
+  // Rating State (Patient can only rate after being treated under this doctor)
   const [hasBeenTreated, setHasBeenTreated] = useState(false)
   const [hasRated, setHasRated] = useState(false)
-  const [showRateModal, setShowRateModal] = useState(false)
   const [userRating, setUserRating] = useState(5)
   const [hoverRating, setHoverRating] = useState(0)
-  const [reviewComment, setReviewComment] = useState('')
+  const [showRatingModal, setShowRatingModal] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
 
   useEffect(() => {
-    // Check local storage for completed consultations with this doctor
     const completedTreatments = JSON.parse(localStorage.getItem('completed_treatments') || '[]')
+    const appointments = JSON.parse(localStorage.getItem('patient_appointments') || '[]')
     const userRatings = JSON.parse(localStorage.getItem('submitted_doctor_ratings') || '{}')
 
-    // If demo patient 'ishika' or patient with completed history
-    const isTreated = completedTreatments.includes(doctor.id) || (user && user.name?.toLowerCase().includes('ishika') && (doctor.id === 1 || doctor.id === 2))
+    // Verified treated patients check: completed treatment list or completed appointment record
+    const hasCompletedAppt = appointments.some(a => 
+      (a.doctorId === doctor.id || (a.doctorName && a.doctorName.toLowerCase().includes(doctor.name.toLowerCase()))) && 
+      (a.status === 'Completed' || a.status === 'completed')
+    )
+    const isTreated = completedTreatments.includes(doctor.id) || hasCompletedAppt || (user && user.name?.toLowerCase().includes('ishika') && (doctor.id === 1 || doctor.id === 2))
     setHasBeenTreated(!!isTreated)
 
     if (userRatings[doctor.id]) {
       setHasRated(true)
+      setUserRating(userRatings[doctor.id].rating || userRatings[doctor.id])
     }
-  }, [doctor.id, user])
+  }, [doctor.id, doctor.name, user])
 
   const handleSimulateTreatment = () => {
     const completedTreatments = JSON.parse(localStorage.getItem('completed_treatments') || '[]')
@@ -74,33 +56,23 @@ export default function DoctorProfile() {
       localStorage.setItem('completed_treatments', JSON.stringify(completedTreatments))
     }
     setHasBeenTreated(true)
-    setToastMessage(lang === 'bn' ? 'পরামর্শ সম্পন্ন হিসেবে চিহ্নিত হয়েছে! এখন রেটিং দিতে পারবেন।' : 'Consultation marked as completed! You can now rate this specialist.')
+    setToastMessage(lang === 'bn' ? 'পরামর্শ সম্পন্ন হিসেবে চিহ্নিত হয়েছে! এখন রেটিং দিতে পারবেন।' : 'Consultation marked as completed! You can now rate this doctor.')
+    setTimeout(() => setToastMessage(''), 3500)
+  }
+
+  const handleSaveRating = (stars) => {
+    setUserRating(stars)
+    setHasRated(true)
+    const userRatings = JSON.parse(localStorage.getItem('submitted_doctor_ratings') || '{}')
+    userRatings[doctor.id] = { rating: stars, date: new Date().toLocaleDateString() }
+    localStorage.setItem('submitted_doctor_ratings', JSON.stringify(userRatings))
+    setShowRatingModal(false)
+    setToastMessage(lang === 'bn' ? `ধন্যবাদ! আপনি ডাক্তারকে ${stars}/5 রেটিং দিয়েছেন।` : `Thank you! You rated this specialist ${stars}/5.`)
     setTimeout(() => setToastMessage(''), 4000)
   }
 
-  const handleSubmitRating = (e) => {
-    e.preventDefault()
-    if (!userRating) return
-
-    const newReview = {
-      id: Date.now(),
-      author: user?.name || 'Verified Patient',
-      date: 'Today',
-      rating: userRating,
-      comment: reviewComment || (lang === 'bn' ? 'চমৎকার পরামর্শ ও আন্তরিক চিকিৎসা।' : 'Very professional diagnosis and treatment.')
-    }
-
-    setReviewsList(prev => [newReview, ...prev])
-    setHasRated(true)
-
-    // Save to localStorage so rating can only be done once
-    const userRatings = JSON.parse(localStorage.getItem('submitted_doctor_ratings') || '{}')
-    userRatings[doctor.id] = { rating: userRating, comment: reviewComment }
-    localStorage.setItem('submitted_doctor_ratings', JSON.stringify(userRatings))
-
-    setShowRateModal(false)
-    setToastMessage(lang === 'bn' ? 'আপনার রেটিং ও মতামত সফলভাবে জমা হয়েছে!' : 'Your verified rating and review have been submitted!')
-    setTimeout(() => setToastMessage(''), 4000)
+  const handleCallDoctor = () => {
+    window.location.href = 'tel:10666'
   }
 
   const daysOfWeek = [
@@ -112,6 +84,14 @@ export default function DoctorProfile() {
     { idx: 5, en: 'Friday', bn: 'শুক্রবার' },
     { idx: 6, en: 'Saturday', bn: 'শনিবার' }
   ]
+
+  const ratingLabels = {
+    5: '5/5 (Outstanding Care)',
+    4: '4/5 (Very Good)',
+    3: '3/5 (Satisfactory)',
+    2: '2/5 (Needs Improvement)',
+    1: '1/5 (Poor)'
+  }
 
   return (
     <div className="doc-profile-page">
@@ -125,371 +105,302 @@ export default function DoctorProfile() {
         </div>
       )}
 
-      {/* Top Breadcrumb Header */}
-      <div className="doc-profile-header-banner">
-        <div className="doc-profile-banner-inner">
-          <div className="doc-breadcrumb">
-            <Link to="/find-doctor">{lang === 'bn' ? '← ডাক্তারদের তালিকা' : '← Back to Doctors List'}</Link>
-            <span>/</span>
-            <span>{doctor.department}</span>
-            <span>/</span>
-            <span className="current">{doctor.name}</span>
-          </div>
-        </div>
-      </div>
-
       <div className="doc-profile-main-container">
-        {/* Main Doctor Hero Card */}
-        <div className="doc-hero-card">
-          <div className="doc-hero-avatar-section">
-            <div className="doc-hero-avatar">
-              <span className="doc-hero-avatar-text">{doctor.initials}</span>
-              <span className="doc-hero-status-badge" title="Verified Specialist">✓</span>
-            </div>
-            <div className="doc-bmdc-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-              <span>BMDC: A-45012</span>
-            </div>
-          </div>
-
-          <div className="doc-hero-info">
-            <div className="doc-dept-tag">{doctor.department}</div>
-            <h1 className="doc-main-name">{doctor.name}</h1>
-            <p className="doc-main-title">{doctor.title}</p>
-            <p className="doc-main-qual">{doctor.qualification}</p>
-
-            <div className="doc-stats-pills">
-              <div className="doc-stat-pill">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span><strong>{doctor.experience}</strong></span>
-              </div>
-              <div className="doc-stat-pill">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                <span><strong>{doctor.room}</strong></span>
-              </div>
-              <div className="doc-stat-pill highlight-rating">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                <span><strong>{doctor.rating}</strong> ({reviewsList.length + doctor.reviewsCount} {lang === 'bn' ? 'রিভিউ' : 'reviews'})</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="doc-hero-actions">
-            <div className="doc-fee-box">
-              <span className="doc-fee-label">{lang === 'bn' ? 'পরামর্শ ফি' : 'Consultation Fee'}</span>
-              <span className="doc-fee-value">{doctor.fee}</span>
-              <span className="doc-fee-vat">{lang === 'bn' ? 'ভ্যাট সহ' : 'Incl. VAT'}</span>
-            </div>
-
-            <button 
-              className="doc-cta-book-btn"
-              onClick={() => navigate(`/book-appointment?doctor=${doctor.id}&action=book`)}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <span>{lang === 'bn' ? 'অ্যাপয়েন্টমেন্ট বুক করুন' : 'Book Appointment'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* 2-Column Details Layout */}
-        <div className="doc-details-grid">
-          {/* Left Column: Doctor Bio, Qualifications, Patient Reviews & Rating Feature */}
-          <div className="doc-details-left">
-            {/* Bio Card */}
-            <div className="doc-card">
-              <h2 className="doc-card-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span>{lang === 'bn' ? 'ডাক্তার পরিচিতি ও বায়ো' : 'About & Biography'}</span>
-              </h2>
-              <p className="doc-bio-text">{doctor.bio}</p>
-              <p className="doc-bio-text-extended">
-                {lang === 'bn'
-                  ? 'তিনি সেন্ট্রাল হসপিটালের একজন প্রখ্যাত ও নিবেদিতপ্রাণ বিশেষজ্ঞ চিকিৎসক। আধুনিক চিকিৎসা প্রযুক্তি ও আন্তর্জাতিক প্রোটোকল মেনে রোগীদের সর্বোচ্চ মানের স্বাস্থ্যসেবা ও পরামর্শ প্রদানে তিনি নিরলস কাজ করে যাচ্ছেন।'
-                  : 'A distinguished and highly committed medical consultant at Central Hospital. Utilizing cutting-edge diagnostics, minimal-invasive clinical protocols, and international healthcare standards to deliver compassionate and evidence-based patient recovery.'}
-              </p>
-            </div>
-
-            {/* Specializations & Focus */}
-            <div className="doc-card">
-              <h2 className="doc-card-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                <span>{lang === 'bn' ? 'ক্লিনিক্যাল বিশেষত্ব ও সেবাসমূহ' : 'Clinical Specialties & Services'}</span>
-              </h2>
-              <div className="doc-specialties-grid">
-                <div className="doc-specialty-item">
-                  <div className="doc-spec-check">✓</div>
-                  <div>
-                    <strong>{lang === 'bn' ? 'বিশেষজ্ঞ ক্লিনিক্যাল রোগ নির্ণয়' : 'Advanced Clinical Diagnostics'}</strong>
-                    <p>{lang === 'bn' ? 'সঠিক পরীক্ষা নিরীক্ষা ও আধুনিক চিকিৎসাপদ্ধতি' : 'Comprehensive assessment & evidence-based care plans'}</p>
-                  </div>
-                </div>
-                <div className="doc-specialty-item">
-                  <div className="doc-spec-check">✓</div>
-                  <div>
-                    <strong>{lang === 'bn' ? 'ইন-পেশেন্ট ও সার্জিক্যাল কেয়ার' : 'In-patient & Operative Care'}</strong>
-                    <p>{lang === 'bn' ? 'জরুরি ও পূর্বপরিকল্পিত আধুনিক অপারেশন' : 'Minimally invasive and standard procedures'}</p>
-                  </div>
-                </div>
-                <div className="doc-specialty-item">
-                  <div className="doc-spec-check">✓</div>
-                  <div>
-                    <strong>{lang === 'bn' ? 'দীর্ঘমেয়াদী ফলো-আপ ও রিহ্যাব' : 'Long-term Chronic Care & Rehabilitation'}</strong>
-                    <p>{lang === 'bn' ? 'নিয়মিত পর্যবেক্ষণ ও প্রেসক্রিপশন সমন্বয়' : 'Personalized medication adjustments & lifestyle guidance'}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* RATINGS & VERIFIED REVIEWS SECTION */}
-            <div className="doc-card doc-reviews-card">
-              <div className="doc-reviews-header-row">
-                <div>
-                  <h2 className="doc-card-title no-border">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    <span>{lang === 'bn' ? 'রোগীদের যাচাইকৃত রিভিউ ও রেটিং' : 'Patient Ratings & Verified Reviews'}</span>
-                  </h2>
-                  <p className="doc-reviews-sub">
-                    {lang === 'bn'
-                      ? 'শুধুমাত্র এই ডাক্তারের অধীনে বুক করা ও চিকিৎসাপ্রাপ্ত রোগীরা রেটিং দিতে পারেন'
-                      : 'Ratings are exclusively unlocked for patients who have booked and completed a consultation with this specialist.'}
-                  </p>
-                </div>
-
-                {/* RATE SPECIALIST BUTTON (Active only if treated, otherwise GRAY/DISABLED) */}
-                <div className="doc-rate-action-box">
-                  {hasRated ? (
-                    <div className="doc-rated-badge">
-                      <span>✓</span> {lang === 'bn' ? 'আপনি রেটিং দিয়েছেন' : 'You reviewed this doctor'}
-                    </div>
-                  ) : hasBeenTreated ? (
-                    <button 
-                      type="button" 
-                      className="doc-rate-btn active"
-                      onClick={() => setShowRateModal(true)}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                      <span>{lang === 'bn' ? 'ডাক্তারকে রেটিং দিন' : 'Rate Specialist'}</span>
-                    </button>
+        
+        {/* ================= HERO BAR ================= */}
+        <section className="doc-hero-showcase-bar">
+          
+          {/* Left Column: Doctor Portrait */}
+          <div className="doc-hero-left-column">
+            <div className="doc-large-portrait-card">
+              <div className="doc-large-portrait-inner">
+                <div className="doc-portrait-image-wrap">
+                  {!imgError && doctor.image ? (
+                    <img 
+                      src={doctor.image} 
+                      alt={doctor.name} 
+                      className="doc-portrait-real-img"
+                      onError={() => setImgError(true)}
+                    />
                   ) : (
-                    <div className="doc-rate-disabled-wrap">
-                      <button 
-                        type="button" 
-                        className="doc-rate-btn disabled"
-                        disabled
-                        title="Rating is locked. Complete a consultation with this doctor to unlock."
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        </svg>
-                        <span>{lang === 'bn' ? 'লক করা (পরামর্শের পর প্রযোজ্য)' : 'Rate Doctor (After Consultation)'}</span>
-                      </button>
-
-                      {/* Quick demo test action to unlock */}
-                      <button 
-                        type="button" 
-                        className="doc-demo-treated-link"
-                        onClick={handleSimulateTreatment}
-                        title="Demo: Click to simulate completing a consultation with this doctor"
-                      >
-                        [Test: Unlock Rating]
-                      </button>
+                    <div className="doc-portrait-fallback">
+                      <span className="doc-portrait-initials-large">{doctor.initials}</span>
                     </div>
                   )}
                 </div>
+
+                {/* Status Badge + Call Icon */}
+                <div className="doc-portrait-footer-row">
+                  <div className={`doc-status-badge ${doctor.isOnLeave ? 'on-leave' : 'active'}`}>
+                    <span className="doc-status-dot"></span>
+                    <span>{doctor.isOnLeave ? 'On Leave' : 'Active'}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="doc-call-icon-btn"
+                    onClick={handleCallDoctor}
+                    title="Call Helpline"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="doc-hero-right-column">
+            
+            <h1 className="doc-title-name">{doctor.name}</h1>
+
+            <div className="doc-degrees-line">
+              {doctor.qualification}
+            </div>
+
+            <div className="doc-dept-role-line">
+              <span className="doc-role-text">{doctor.title}</span>
+              <span className="doc-role-sep">·</span>
+              <span className="doc-dept-text">{doctor.department}</span>
+              <span className="doc-role-sep">·</span>
+              <span className="doc-fee-inline-pill">
+                <span className="doc-fee-tag-icon">৳</span>
+                <span className="doc-fee-amount">{lang === 'bn' ? 'ফি:' : 'Fee:'} {doctor.fee}</span>
+              </span>
+            </div>
+
+            {/* Location & Rating Strip */}
+            <div className="doc-right-meta-strip">
+              <div className="doc-right-meta-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>{doctor.room}, Central Hospital, Dhaka</span>
+              </div>
+              <div className="doc-right-meta-divider"></div>
+              <div className="doc-right-meta-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706" stroke="#D97706" strokeWidth="1.5">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                <strong>{doctor.rating} / 5.0</strong>
+                {hasRated ? (
+                  <span className="doc-rated-tag">You rated {userRating}/5</span>
+                ) : hasBeenTreated ? (
+                  <button type="button" className="doc-quick-rate-btn" onClick={() => setShowRatingModal(true)}>
+                    {lang === 'bn' ? 'রেটিং দিন' : 'Rate Doctor'}
+                  </button>
+                ) : (
+                  <span className="doc-rate-locked-hint" title={lang === 'bn' ? 'পরামর্শ সম্পন্ন হওয়ার পর রেটিং প্রদান করা যাবে' : 'Rating is available after consultation with this doctor'}>
+                    {lang === 'bn' ? '(চিকিৎসা গ্রহণের পর রেটিং দিন)' : '(Verified Patients)'}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* About Doctor Card */}
+            <div className="doc-about-card-inside">
+              <span className="doc-about-badge-label">ABOUT DOCTOR</span>
+              <div className="doc-about-body-text">
+                <p className="doc-bio-lead">
+                  <strong>{doctor.name}</strong> {lang === 'bn' 
+                    ? `সেন্ট্রাল হসপিটালের ${doctor.department} বিভাগের একজন অত্যন্ত অভিজ্ঞ ও প্রখ্যাত কনসালট্যান্ট।`
+                    : `is a highly experienced ${doctor.department} Specialist at Central Hospital, Dhaka, holding ${doctor.qualification} degrees.`}
+                </p>
+                <p className="doc-bio-concise">{doctor.bio}</p>
               </div>
 
-              {/* Reviews List */}
-              <div className="doc-reviews-feed">
-                {reviewsList.map(rev => (
-                  <div key={rev.id} className="doc-review-item">
-                    <div className="doc-rev-top">
-                      <div className="doc-rev-author-box">
-                        <div className="doc-rev-avatar">{rev.author.charAt(0)}</div>
+              <button
+                type="button"
+                className="doc-view-full-profile-btn"
+                onClick={() => setExpandedBio(!expandedBio)}
+              >
+                <span>{expandedBio
+                  ? (lang === 'bn' ? 'সংক্ষিপ্ত দেখুন' : 'SHOW LESS')
+                  : (lang === 'bn' ? 'সম্পূর্ণ প্রোফাইল দেখুন' : 'VIEW FULL PROFILE')}
+                </span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  {expandedBio ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+                </svg>
+              </button>
+            </div>
+
+            {/* Floating Expanded Panel — appears below the about card when toggled */}
+            {expandedBio && (
+              <div className="doc-expanded-float-panel">
+
+                <div className="doc-expanded-block">
+                  <h4 className="doc-expanded-heading">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span>{lang === 'bn' ? 'ক্লিনিক্যাল বিশেষত্ব' : 'Clinical Expertise & Specialization'}</span>
+                  </h4>
+                  <p className="doc-expanded-text">
+                    {lang === 'bn'
+                      ? 'তিনি আন্তর্জাতিক মানের চিকিৎসা প্রোটোকল মেনে সঠিক রোগ নির্ণয়, ন্যূনতম আক্রমণাত্মক সার্জারি ও দীর্ঘমেয়াদী ফলো-আপে বিশেষজ্ঞ।'
+                      : 'Specializing in evidence-based diagnostics, advanced surgical interventions, and comprehensive post-operative recovery at Central Hospital.'}
+                  </p>
+                </div>
+
+                <div className="doc-expanded-block">
+                  <h4 className="doc-expanded-heading">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                    <span>{lang === 'bn' ? 'শিক্ষা ও ডিগ্রি' : 'Education & Credentials'}</span>
+                  </h4>
+                  <div className="doc-credentials-list">
+                    {doctor.educationList?.map((edu, idx) => (
+                      <div key={idx} className="doc-credential-item">
+                        <span className="doc-cred-dot"></span>
                         <div>
-                          <strong className="doc-rev-name">{rev.author}</strong>
-                          <span className="doc-rev-verified">✓ Verified Patient</span>
+                          <strong>{edu.degree}</strong>
+                          <p>{edu.institution}</p>
                         </div>
                       </div>
-                      <div className="doc-rev-stars">
-                        {'★'.repeat(rev.rating)}
-                        <span className="doc-rev-date">{rev.date}</span>
-                      </div>
-                    </div>
-                    <p className="doc-rev-comment">{rev.comment}</p>
+                    ))}
                   </div>
+                </div>
+
+                <div className="doc-expanded-block">
+                  <h4 className="doc-expanded-heading">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>{lang === 'bn' ? 'পেশাদার অভিজ্ঞতা' : 'Experience & Milestones'}</span>
+                  </h4>
+                  <div className="doc-experience-chips-list">
+                    {doctor.experienceHighlights?.map((exp, idx) => (
+                      <div key={idx} className="doc-exp-highlight-item">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>{exp}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+        </section>
+
+        {/* ================= WEEKLY CHAMBER SCHEDULE ================= */}
+        <section className="doc-schedule-section">
+          <div className="doc-schedule-container">
+            
+            <div className="doc-sched-header-row">
+              <div className="doc-sched-title-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2.2">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <h2>{lang === 'bn' ? 'সাপ্তাহিক চেম্বার ও সময়সূচী' : 'Weekly Chamber Schedule'}</h2>
+              </div>
+              <span className="doc-sched-subtitle">
+                {lang === 'bn' ? 'অন-ডিউটি সময়সূচী ও আজকের অ্যাপয়েন্টমেন্ট স্লট' : 'Regular on-duty consultation timetable & daily slots'}
+              </span>
+            </div>
+
+            <div className="doc-weekly-cards-grid">
+              {daysOfWeek.map(day => {
+                const isAvailable = doctor.availableDays?.includes(day.idx)
+                return (
+                  <div key={day.idx} className={`doc-day-box ${isAvailable ? 'available' : 'closed'}`}>
+                    <div className="doc-day-box-top">
+                      <span className="doc-day-box-name">{lang === 'bn' ? day.bn : day.en}</span>
+                      <span className={`doc-day-indicator ${isAvailable ? 'on' : 'off'}`}>
+                        {isAvailable ? (lang === 'bn' ? 'উপলব্ধ' : 'Open') : (lang === 'bn' ? 'বন্ধ' : 'Closed')}
+                      </span>
+                    </div>
+                    <div className="doc-day-box-hours">
+                      {isAvailable ? '09:00 AM - 05:00 PM' : (lang === 'bn' ? 'সাপ্তাহিক ছুটি (Off Duty)' : 'Off Duty')}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Today's Available Slots */}
+            <div className="doc-slots-area">
+              <span className="doc-slots-label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                {lang === 'bn' ? 'আজকের স্লটসমূহ:' : "Today's Consultation Slots:"}
+              </span>
+              <div className="doc-slots-chips-wrap">
+                {doctor.timeSlots?.map((slot, idx) => (
+                  <span key={idx} className={`doc-time-badge ${slot.available ? 'slot-open' : 'slot-booked'}`}>
+                    {slot.time} {slot.available ? '' : '- Booked'}
+                  </span>
                 ))}
               </div>
             </div>
 
-            {/* Education & Qualifications */}
-            <div className="doc-card">
-              <h2 className="doc-card-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                <span>{lang === 'bn' ? 'শিক্ষা ও প্রশিক্ষণ' : 'Education & Credentials'}</span>
-              </h2>
-              <ul className="doc-edu-list">
-                <li className="doc-edu-item">
-                  <div className="doc-edu-bullet"></div>
-                  <div>
-                    <strong>{doctor.qualification}</strong>
-                    <p>{lang === 'bn' ? 'ঢাকা মেডিকেল কলেজ ও বিসিপিএস / আন্তর্জাতিক ফেলোশিপ' : 'Dhaka Medical College & Recognized Fellowship'}</p>
-                  </div>
-                </li>
-                <li className="doc-edu-item">
-                  <div className="doc-edu-bullet"></div>
-                  <div>
-                    <strong>BMDC Registered Specialist (Medical Practitioner)</strong>
-                    <p>Bangladesh Medical and Dental Council (BMDC Reg No: A-45012)</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
+            {/* Book Appointment CTA */}
+            <button 
+              className="doc-schedule-book-cta-btn"
+              onClick={() => navigate(`/book-appointment?doctor=${doctor.id}&action=book`)}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <span>{lang === 'bn' ? `ডা. ${doctor.name}-এর অ্যাপয়েন্টমেন্ট বুক করুন` : `Book Appointment with ${doctor.name}`}</span>
+            </button>
+
           </div>
+        </section>
 
-          {/* Right Column: Schedule & Quick Booking Box */}
-          <div className="doc-details-right">
-            {/* Consultation Schedule Card */}
-            <div className="doc-card doc-schedule-card">
-              <h2 className="doc-card-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3C35" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span>{lang === 'bn' ? 'চেম্বার ও সময়সূচী' : 'Weekly Chamber Schedule'}</span>
-              </h2>
+      </div>
 
-              <div className="doc-days-list">
-                {daysOfWeek.map(day => {
-                  const isAvailable = doctor.availableDays?.includes(day.idx)
-                  return (
-                    <div key={day.idx} className={`doc-day-row ${isAvailable ? 'available-day' : 'off-day'}`}>
-                      <span className="doc-day-name">{lang === 'bn' ? day.bn : day.en}</span>
-                      <span className="doc-day-status">
-                        {isAvailable 
-                          ? (lang === 'bn' ? 'সকাল ৯:০০ - বিকাল ৫:০০' : '09:00 AM - 05:00 PM')
-                          : (lang === 'bn' ? 'বন্ধ (Off Duty)' : 'Closed / Off Duty')}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-
-              <div className="doc-slots-preview">
-                <h3 className="doc-slots-heading">{lang === 'bn' ? 'আজকের স্লটসমূহ' : 'Available Daily Slots'}</h3>
-                <div className="doc-time-chips">
-                  {doctor.timeSlots?.map((slot, idx) => (
-                    <span key={idx} className={`doc-time-chip ${slot.available ? 'slot-open' : 'slot-booked'}`}>
-                      {slot.time} {slot.available ? '' : '(Booked)'}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <button 
-                className="doc-cta-book-btn full-width"
-                onClick={() => navigate(`/book-appointment?doctor=${doctor.id}&action=book`)}
-              >
-                {lang === 'bn' ? 'এই ডাক্তারের অ্যাপয়েন্টমেন্ট বুক করুন' : `Book Appointment with ${doctor.name}`}
+      {/* ================= STAR RATING MODAL ================= */}
+      {showRatingModal && (
+        <div className="doc-rating-modal-overlay" onClick={() => setShowRatingModal(false)}>
+          <div className="doc-rating-modal-card" onClick={e => e.stopPropagation()}>
+            <div className="doc-rating-modal-header">
+              <h3>{lang === 'bn' ? 'ডাক্তারকে রেটিং দিন' : 'Rate Your Doctor'}</h3>
+              <button className="doc-rating-close-btn" onClick={() => setShowRatingModal(false)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
 
-            {/* Chamber Location Info */}
-            <div className="doc-card doc-location-card">
-              <h3 className="doc-location-title">{lang === 'bn' ? 'চেম্বার ও যোগাযোগ' : 'Chamber Location'}</h3>
-              <p className="doc-location-line">
-                <strong>{lang === 'bn' ? 'কক্ষ নম্বর:' : 'Room:'}</strong> {doctor.room}
-              </p>
-              <p className="doc-location-line">
-                <strong>{lang === 'bn' ? 'হাসপাতাল:' : 'Hospital:'}</strong> Central Hospital Main Block, Dhanmondi, Dhaka
-              </p>
-              <p className="doc-location-line">
-                <strong>{lang === 'bn' ? 'হেল্পলাইন:' : 'Helpline:'}</strong> 10666 / +880 9611-123456
-              </p>
-            </div>
+            <div className="doc-rating-modal-body">
+              <p className="doc-rating-target-name">{doctor.name} · {doctor.department}</p>
+              <span className="doc-rating-prompt-text">
+                {lang === 'bn' ? 'পরামর্শের মানের ভিত্তিতে স্টার নির্বাচন করুন:' : 'Select star score based on your consultation experience:'}
+              </span>
 
-            {/* Related Doctors */}
-            {relatedDoctors.length > 0 && (
-              <div className="doc-card">
-                <h3 className="doc-related-title">{lang === 'bn' ? 'একই বিভাগের অন্যান্য বিশেষজ্ঞ' : 'More Specialists in this Dept'}</h3>
-                <div className="doc-related-list">
-                  {relatedDoctors.map(rd => (
-                    <div key={rd.id} className="doc-related-item" onClick={() => navigate(`/doctor/${rd.id}`)}>
-                      <div className="doc-related-avatar">{rd.initials}</div>
-                      <div className="doc-related-info">
-                        <span className="doc-related-name">{rd.name}</span>
-                        <span className="doc-related-qual">{rd.qualification}</span>
-                      </div>
-                      <span className="doc-related-arrow">→</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ================= RATE SPECIALIST MODAL ================= */}
-      {showRateModal && (
-        <div className="doc-modal-overlay" onClick={() => setShowRateModal(false)}>
-          <div className="doc-modal-container rate-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="doc-modal-header">
-              <div className="doc-modal-header-info">
-                <div className="doc-modal-pat-avatar">{doctor.initials}</div>
-                <div>
-                  <h3 className="doc-modal-pat-name">{lang === 'bn' ? 'ডাক্তারকে রেটিং ও রিভিউ দিন' : 'Rate & Review Specialist'}</h3>
-                  <p className="doc-modal-pat-meta">{doctor.name} • {doctor.department}</p>
-                </div>
-              </div>
-              <button className="doc-modal-close-btn" onClick={() => setShowRateModal(false)}>✕</button>
-            </div>
-
-            <form onSubmit={handleSubmitRating} className="doc-rate-form">
-              <div className="doc-star-rating-box">
-                <span className="doc-rate-instruction">{lang === 'bn' ? 'আপনার পরামর্শ অভিজ্ঞতা নির্বাচন করুন:' : 'Select your overall treatment experience:'}</span>
-                <div className="doc-stars-picker">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      key={star}
-                      type="button"
-                      className={`doc-star-btn ${(hoverRating || userRating) >= star ? 'selected' : ''}`}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      onClick={() => setUserRating(star)}
-                    >
-                      ★
-                    </button>
-                  ))}
-                </div>
-                <span className="doc-star-score-text">
-                  {userRating === 5 && '⭐⭐⭐⭐⭐ Outstanding Care (5/5)'}
-                  {userRating === 4 && '⭐⭐⭐⭐ Very Good (4/5)'}
-                  {userRating === 3 && '⭐⭐⭐ Average (3/5)'}
-                  {userRating <= 2 && '⭐⭐ Below Expectations'}
-                </span>
+              <div className="doc-modal-stars-row">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <button
+                    key={star}
+                    type="button"
+                    className={`doc-star-click-btn ${(hoverRating || userRating) >= star ? 'active' : ''}`}
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setUserRating(star)}
+                  >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill={(hoverRating || userRating) >= star ? '#D97706' : 'none'} stroke="#D97706" strokeWidth="1.5">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  </button>
+                ))}
               </div>
 
-              <div className="doc-form-group">
-                <label className="doc-label">{lang === 'bn' ? 'আপনার মূল্যবান মতামত লিখুন:' : 'Share your clinical experience / feedback:'}</label>
-                <textarea
-                  className="doc-textarea"
-                  rows="4"
-                  placeholder={lang === 'bn' ? 'ডাক্তারের পরামর্শ, চিকিৎসার মান বা অভিজ্ঞতা সম্পর্কে লিখুন...' : 'Describe the doctor diagnosis, wait time, explanation and treatment outcome...'}
-                  value={reviewComment}
-                  onChange={(e) => setReviewComment(e.target.value)}
-                  required
-                ></textarea>
-              </div>
+              <span className="doc-modal-score-label">
+                {ratingLabels[userRating] || ''}
+              </span>
 
-              <div className="doc-rate-modal-actions">
-                <button type="button" className="doc-btn-cancel" onClick={() => setShowRateModal(false)}>
+              <div className="doc-rating-modal-actions">
+                <button type="button" className="doc-rating-cancel-btn" onClick={() => setShowRatingModal(false)}>
                   {lang === 'bn' ? 'বাতিল' : 'Cancel'}
                 </button>
-                <button type="submit" className="doc-btn-submit-rate">
-                  {lang === 'bn' ? 'রিভিউ জমা দিন' : 'Submit Verified Review'}
+                <button 
+                  type="button" 
+                  className="doc-rating-submit-btn"
+                  onClick={() => handleSaveRating(userRating)}
+                >
+                  {lang === 'bn' ? 'রেটিং সংরক্ষণ করুন' : 'Submit Rating'}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}

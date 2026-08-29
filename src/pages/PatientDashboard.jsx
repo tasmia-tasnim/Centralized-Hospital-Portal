@@ -4,6 +4,10 @@ import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import './PatientDashboard.css'
 
+const DEFAULT_RUNNING_MEDS = [
+  { id: 1, name: 'Concor 5mg', dosage: '1 Tablet Daily (Morning)', doc: 'Dr. Imran Kabir', date: 'Prescribed 20 Aug 2026' }
+]
+
 export default function PatientDashboard() {
   const { user } = useAuth()
   const { lang } = useLanguage()
@@ -18,7 +22,9 @@ export default function PatientDashboard() {
     age: '24',
     gender: 'Female',
     address: 'House 42, Road 11, Dhanmondi, Dhaka',
-    emergencyContact: '+880 1819-998877'
+    emergencyContact: '+880 1819-998877',
+    allergies: 'Penicillin, Dust',
+    chronicConditions: 'Asthma (Mild)'
   })
 
   // Synchronize profile data from storage/user context
@@ -40,27 +46,127 @@ export default function PatientDashboard() {
         age: user.age || prev.age,
         gender: user.gender || prev.gender,
         address: user.address || prev.address,
-        emergencyContact: user.emergencyContact || prev.emergencyContact
+        emergencyContact: user.emergencyContact || prev.emergencyContact,
+        allergies: user.allergies !== undefined ? user.allergies : prev.allergies,
+        chronicConditions: user.chronicConditions !== undefined ? user.chronicConditions : prev.chronicConditions
       }))
     }
   }, [user])
 
-  // Mock patient clinical records
-  const [runningMeds] = useState([
-    { id: 1, name: 'Concor 5mg', dosage: '1 Tablet Daily (Morning)', doc: 'Dr. Imran Kabir', date: 'Prescribed 20 Aug 2026' }
-  ])
+  // Running Medications State with LocalStorage Persistence
+  const [runningMeds, setRunningMeds] = useState(() => {
+    const savedMeds = localStorage.getItem('patient_running_meds')
+    if (savedMeds) {
+      try {
+        return JSON.parse(savedMeds)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    return DEFAULT_RUNNING_MEDS
+  })
 
-  const [appointments] = useState([
-    { id: 'APT-9921', doctor: 'Dr. Jahangir Kabir', dept: 'Cardiac Surgery', date: 'Tomorrow, 10:30 AM', room: 'Room 402, East Wing', status: 'Confirmed' }
-  ])
+  // Add Medication Modal State
+  const [showAddMedModal, setShowAddMedModal] = useState(false)
+  const [newMedName, setNewMedName] = useState('')
+  const [newMedDose, setNewMedDose] = useState('')
+  const [newMedDoc, setNewMedDoc] = useState('')
+  const [medToast, setMedToast] = useState('')
+
+  const handleSaveMed = (e) => {
+    e.preventDefault()
+    if (!newMedName.trim()) return
+
+    const newEntry = {
+      id: Date.now(),
+      name: newMedName.trim(),
+      dosage: newMedDose.trim() || (lang === 'bn' ? '১টি ট্যাবলেট দিনে একবার' : '1 Tablet Daily'),
+      doc: newMedDoc.trim() || (lang === 'bn' ? 'স্ব-নির্ধারিত / সেন্ট্রাল হসপিটাল' : 'Self-added / Central Hospital'),
+      date: `Added ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`
+    }
+
+    const updated = [newEntry, ...runningMeds]
+    setRunningMeds(updated)
+    localStorage.setItem('patient_running_meds', JSON.stringify(updated))
+
+    setNewMedName('')
+    setNewMedDose('')
+    setNewMedDoc('')
+    setShowAddMedModal(false)
+
+    setMedToast(lang === 'bn' ? 'নতুন ওষুধ সফলভাবে যোগ করা হয়েছে!' : 'New medication added successfully!')
+    setTimeout(() => setMedToast(''), 3500)
+  }
+
+  const handleRemoveMed = (medId) => {
+    const updated = runningMeds.filter(m => m.id !== medId)
+    setRunningMeds(updated)
+    localStorage.setItem('patient_running_meds', JSON.stringify(updated))
+    setMedToast(lang === 'bn' ? 'ওষুধ তালিকা থেকে সরানো হয়েছে' : 'Medication removed')
+    setTimeout(() => setMedToast(''), 3000)
+  }
 
   const [vaccines] = useState([
     { name: 'COVID-19 Booster Dose', date: 'Completed (15 Jan 2026)', status: 'Completed', type: 'Pfizer-BioNTech' },
     { name: 'Hepatitis B (Dose 3/3)', date: 'Scheduled for 12 Sep 2026', status: 'Upcoming', type: 'Recombinant' }
   ])
 
+  // Safe text formatter for allergies & chronic conditions (handles both string and array formats)
+  const formatListText = (val, emptyFallback) => {
+    if (!val) return emptyFallback
+    if (Array.isArray(val)) {
+      const filtered = val.filter(Boolean)
+      return filtered.length > 0 ? filtered.join(', ') : emptyFallback
+    }
+    if (typeof val === 'string') {
+      const trimmed = val.trim()
+      return trimmed || emptyFallback
+    }
+    return String(val)
+  }
+
+  // Blood requests state & modal toggle
+  const [showBloodModal, setShowBloodModal] = useState(false)
+  const [bloodRequests, setBloodRequests] = useState(() => {
+    const savedReqs = localStorage.getItem('blood_donor_requests')
+    if (savedReqs) {
+      try { return JSON.parse(savedReqs) } catch (e) { console.error(e) }
+    }
+    return [
+      {
+        id: 'REQ-DEMO-1',
+        patientName: 'Shahed Ahmed',
+        requesterEmail: 'shahed.care@gmail.com',
+        bloodGroup: 'O+',
+        unitsNeeded: '2',
+        urgency: 'Immediate',
+        hospital: 'Central Hospital (Dhaka)',
+        wardRoom: 'ICU Bed 4',
+        message: 'Urgent surgery scheduled tomorrow morning. Need verified blood donor.',
+        createdAt: new Date().toISOString(),
+        status: 'Pending'
+      }
+    ]
+  })
+
+  const handleDismissBloodRequest = (reqId) => {
+    const updated = bloodRequests.filter(r => r.id !== reqId)
+    setBloodRequests(updated)
+    localStorage.setItem('blood_donor_requests', JSON.stringify(updated))
+  }
+
   return (
     <div className="pd-page">
+      {/* Toast */}
+      {medToast && (
+        <div className="pd-toast">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>{medToast}</span>
+        </div>
+      )}
+
       <div className="pd-main-container">
         
         {/* Welcome Header */}
@@ -75,65 +181,39 @@ export default function PatientDashboard() {
                 : 'Your centralized personal health portal, ongoing treatments and medical history'}
             </p>
           </div>
-        </div>
 
-        {/* Top 5 Stat Cards Ribbon */}
-        <div className="pd-stats-ribbon">
-          {/* Blood Group */}
-          <div className="pd-stat-card">
-            <div className="pd-stat-top">
-              <span className="pd-stat-label">{lang === 'bn' ? 'রক্তের গ্রুপ' : 'Blood Group'}</span>
-              <span className="pd-stat-icon-wrap red">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5">
+          {/* Compact Blood Request Button if any requests exist */}
+          {bloodRequests.length > 0 && (
+            <div className="pd-welcome-actions">
+              <button 
+                type="button" 
+                className="pd-blood-requests-btn"
+                onClick={() => setShowBloodModal(true)}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
                 </svg>
-              </span>
+                <span>{lang === 'bn' ? 'রক্তের অনুরোধ' : 'Blood Requests'}</span>
+                <span className="pd-blood-badge-pill">{bloodRequests.length}</span>
+              </button>
             </div>
-            <div className="pd-stat-val bold red-text">{profile.bloodGroup || 'Not Set'}</div>
-            <Link to="/profile" className="pd-stat-link">{lang === 'bn' ? 'প্রোফাইল দেখুন →' : 'View Profile →'}</Link>
-          </div>
+          )}
+        </div>
 
+        {/* Top Stat Cards Ribbon */}
+        <div className="pd-stats-ribbon">
           {/* Running Medications */}
           <div className="pd-stat-card">
             <div className="pd-stat-top">
               <span className="pd-stat-label">{lang === 'bn' ? 'চলমান ওষুধ' : 'Running Medications'}</span>
-              <span className="pd-stat-icon-wrap teal">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D9488" strokeWidth="2">
+              <span className="pd-stat-icon-wrap green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
                   <path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>
                 </svg>
               </span>
             </div>
             <div className="pd-stat-val">{runningMeds.length} {lang === 'bn' ? 'সক্রিয়' : 'Active'}</div>
             <span className="pd-stat-subtext">{lang === 'bn' ? 'দৈনিক ডোজ শিডিউল' : 'Daily dose schedule'}</span>
-          </div>
-
-          {/* Test Reports */}
-          <div className="pd-stat-card">
-            <div className="pd-stat-top">
-              <span className="pd-stat-label">{lang === 'bn' ? 'টেস্ট রিপোর্ট ও রোগ নির্ণয়' : 'Test Reports & Diagnoses'}</span>
-              <span className="pd-stat-icon-wrap purple">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9333EA" strokeWidth="2">
-                  <path d="M10 2v7.5L4.5 18A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3L14 9.5V2"/>
-                  <path d="M8.5 2h7"/>
-                </svg>
-              </span>
-            </div>
-            <div className="pd-stat-val">2</div>
-            <span className="pd-stat-subtext">{lang === 'bn' ? 'ল্যাব রিপোর্ট সংরক্ষিত' : 'Lab reports on file'}</span>
-          </div>
-
-          {/* Recent Admission Info */}
-          <div className="pd-stat-card">
-            <div className="pd-stat-top">
-              <span className="pd-stat-label">{lang === 'bn' ? 'ভর্তি তথ্য (IPD)' : 'Recent Admission Info (IPD)'}</span>
-              <span className="pd-stat-icon-wrap blue">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2">
-                  <path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>
-                </svg>
-              </span>
-            </div>
-            <div className="pd-stat-val">0</div>
-            <span className="pd-stat-subtext">{lang === 'bn' ? 'হাসপাতালে ভর্তির রেকর্ড' : 'Hospital stay records'}</span>
           </div>
 
           {/* Vaccines */}
@@ -157,7 +237,7 @@ export default function PatientDashboard() {
           {/* ============ LEFT COLUMN ============ */}
           <div className="pd-grid-col-left">
             
-            {/* 1. Running Medications Card */}
+            {/* 1. Running Medications Card with Add Option */}
             <div className="pd-card">
               <div className="pd-card-header-row">
                 <div className="pd-card-title-wrap">
@@ -166,9 +246,19 @@ export default function PatientDashboard() {
                   </svg>
                   <h2 className="pd-card-title">{lang === 'bn' ? 'চলমান ওষুধসমূহ' : 'Running Medications'}</h2>
                 </div>
-                <Link to="/pharmacy" className="pd-card-action-link">
-                  {lang === 'bn' ? 'ওষুধ অর্ডার করুন →' : 'Order Medicines →'}
-                </Link>
+                
+                <div className="pd-med-actions-header">
+                  <button 
+                    type="button" 
+                    className="pd-add-med-btn"
+                    onClick={() => setShowAddMedModal(true)}
+                  >
+                    + {lang === 'bn' ? 'ওষুধ যোগ করুন' : 'Add Medication'}
+                  </button>
+                  <Link to="/pharmacy" className="pd-card-action-link">
+                    {lang === 'bn' ? 'ফার্মেসি →' : 'Pharmacy →'}
+                  </Link>
+                </div>
               </div>
 
               <div className="pd-card-content">
@@ -176,15 +266,29 @@ export default function PatientDashboard() {
                   <div className="pd-meds-list">
                     {runningMeds.map(med => (
                       <div key={med.id} className="pd-med-item">
-                        <div className="pd-med-icon">💊</div>
+                        <div className="pd-med-icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D9488" strokeWidth="2">
+                            <path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>
+                          </svg>
+                        </div>
                         <div className="pd-med-info">
                           <strong className="pd-med-name">{med.name}</strong>
                           <span className="pd-med-dose">{med.dosage}</span>
                           <span className="pd-med-doc">{med.doc} • {med.date}</span>
                         </div>
-                        <Link to="/pharmacy" className="pd-med-reorder-btn">
-                          {lang === 'bn' ? 'রি-অর্ডার' : 'Refill'}
-                        </Link>
+                        <div className="pd-med-btn-group">
+                          <Link to="/pharmacy" className="pd-med-reorder-btn">
+                            {lang === 'bn' ? 'রি-অর্ডার' : 'Refill'}
+                          </Link>
+                          <button 
+                            type="button" 
+                            className="pd-med-delete-btn" 
+                            title="Remove medication"
+                            onClick={() => handleRemoveMed(med.id)}
+                          >
+                            ✕
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -192,60 +296,15 @@ export default function PatientDashboard() {
                   <div className="pd-empty-box">
                     <p className="pd-empty-text">
                       {lang === 'bn' 
-                        ? 'বর্তমানে কোনো চলমান ওষুধ রেকর্ড নেই। ডাক্তারের পরামর্শ অনুযায়ী প্রেসক্রিপশন এখানে দেখা যাবে।' 
-                        : 'No running medications currently recorded. Prescribed medications from your doctor visits will appear here.'}
+                        ? 'বর্তমানে কোনো চলমান ওষুধ যোগ করা নেই। আপনার প্রেসক্রিপশন অনুযায়ী উপরের বোতাম ব্যবহার করে ওষুধ যোগ করুন।' 
+                        : 'No running medications currently recorded. Click "+ Add Medication" above to add your daily prescribed medicines.'}
                     </p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* 2. Recent Appointments & Prescriptions Card */}
-            <div className="pd-card">
-              <div className="pd-card-header-row">
-                <div className="pd-card-title-wrap">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                  </svg>
-                  <h2 className="pd-card-title">{lang === 'bn' ? 'সাম্প্রতিক অ্যাপয়েন্টমেন্ট ও প্রেসক্রিপশন' : 'Recent Appointments & Prescriptions'}</h2>
-                </div>
-                <Link to="/medical-record" className="pd-card-action-link">
-                  {lang === 'bn' ? 'সব দেখুন →' : 'View All →'}
-                </Link>
-              </div>
-
-              <div className="pd-card-content">
-                {appointments.length > 0 ? (
-                  <div className="pd-apt-list">
-                    {appointments.map(apt => (
-                      <div key={apt.id} className="pd-apt-item">
-                        <div className="pd-apt-badge-cal">
-                          <span className="apt-month">AUG</span>
-                          <span className="apt-day">26</span>
-                        </div>
-                        <div className="pd-apt-details">
-                          <div className="pd-apt-header-line">
-                            <strong className="pd-apt-doc">{apt.doctor}</strong>
-                            <span className="pd-apt-status-pill">{apt.status}</span>
-                          </div>
-                          <span className="pd-apt-sub">{apt.dept} • {apt.room}</span>
-                          <span className="pd-apt-time">🕒 {apt.date}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="pd-empty-box center-aligned">
-                    <p className="pd-empty-text">{lang === 'bn' ? 'এখনো কোনো অ্যাপয়েন্টমেন্ট নির্ধারিত হয়নি।' : 'No appointments scheduled or recorded yet.'}</p>
-                    <button className="pd-btn-primary" onClick={() => navigate('/find-doctor')}>
-                      {lang === 'bn' ? 'প্রথম পরামর্শ বুক করুন' : 'Book Your First Consultation'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* 3. Vaccine Bookings & Protection */}
+            {/* 2. Vaccine Bookings & Protection */}
             <div className="pd-card">
               <div className="pd-card-header-row">
                 <div className="pd-card-title-wrap">
@@ -275,116 +334,23 @@ export default function PatientDashboard() {
               </div>
             </div>
 
-            {/* 4. Test Reports & Diagnoses Card */}
-            <div className="pd-card">
-              <div className="pd-card-header-row">
-                <div className="pd-card-title-wrap">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9333EA" strokeWidth="2">
-                    <path d="M10 2v7.5L4.5 18A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3L14 9.5V2"/>
-                    <path d="M8.5 2h7"/>
-                  </svg>
-                  <h2 className="pd-card-title">{lang === 'bn' ? 'ল্যাব টেস্ট ও রিপোর্ট' : 'Test Reports & Diagnoses'}</h2>
-                </div>
-                <Link to="/pricing" className="pd-card-action-link">
-                  {lang === 'bn' ? 'টেস্ট বুক করুন →' : 'Book Test →'}
-                </Link>
-              </div>
-
-              <div className="pd-card-content">
-                <div className="pd-lab-preview-list">
-                  <div className="pd-lab-preview-item">
-                    <div className="pd-lab-left">
-                      <strong>12-Lead ECG Report (Electrocardiogram)</strong>
-                      <span>24 Aug 2026 • Verified by Cardiology Dept</span>
-                    </div>
-                    <span className="pd-lab-status-badge">Normal</span>
-                  </div>
-                  <div className="pd-lab-preview-item">
-                    <div className="pd-lab-left">
-                      <strong>Complete Blood Count (CBC)</strong>
-                      <span>22 Aug 2026 • Central Pathology Lab</span>
-                    </div>
-                    <span className="pd-lab-status-badge">Ready</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 5. Billing & Hospital Invoices */}
-            <div className="pd-card">
-              <div className="pd-card-header-row">
-                <div className="pd-card-title-wrap">
-                  <span className="pd-taka-icon">৳</span>
-                  <h2 className="pd-card-title">{lang === 'bn' ? 'বিলিং ও হাসপাতাল ইনভয়েস' : 'Billing & Hospital Invoices'}</h2>
-                </div>
-              </div>
-              <div className="pd-card-content">
-                <div className="pd-empty-box">
-                  <p className="pd-empty-text">
-                    {lang === 'bn' 
-                      ? 'এই অ্যাকাউন্টে কোনো বকেয়া বিল বা ইনভয়েস নেই।' 
-                      : 'No outstanding bills or invoices recorded for this account.'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
           </div>
 
           {/* ============ RIGHT COLUMN ============ */}
           <div className="pd-grid-col-right">
             
-            {/* 1. Allergies & Chronic Conditions */}
-            <div className="pd-card pd-allergies-card">
-              <div className="pd-card-header-row">
-                <div className="pd-card-title-wrap">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E11D48" strokeWidth="2">
-                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-                  </svg>
-                  <h3 className="pd-card-title-sm">{lang === 'bn' ? 'অ্যালার্জি ও দীর্ঘস্থায়ী রোগ' : 'Allergies & Chronic Conditions'}</h3>
-                </div>
-              </div>
-
-              <div className="pd-card-content">
-                <div className="pd-condition-group">
-                  <span className="pd-condition-label">{lang === 'bn' ? 'অ্যালার্জি' : 'Allergies'}</span>
-                  <p className="pd-condition-val muted">{lang === 'bn' ? 'কোনো জানা অ্যালার্জি নেই' : 'No known allergies listed'}</p>
-                </div>
-                <div className="pd-condition-divider"></div>
-                <div className="pd-condition-group">
-                  <span className="pd-condition-label">{lang === 'bn' ? 'দীর্ঘস্থায়ী রোগ' : 'Chronic Conditions'}</span>
-                  <p className="pd-condition-val muted">{lang === 'bn' ? 'কোনো দীর্ঘস্থায়ী রোগ নেই' : 'No chronic conditions listed'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Recent Admission Info (IPD) */}
-            <div className="pd-card">
-              <div className="pd-card-header-row">
-                <div className="pd-card-title-wrap">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2">
-                    <path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>
-                  </svg>
-                  <h3 className="pd-card-title-sm">{lang === 'bn' ? 'সাম্প্রতিক ভর্তি তথ্য (IPD)' : 'Recent Admission Info (IPD)'}</h3>
-                </div>
-              </div>
-
-              <div className="pd-card-content">
-                <div className="pd-empty-box compact">
-                  <p className="pd-empty-text">{lang === 'bn' ? 'হাসপাতালে ভর্তির কোনো পূর্ববর্তী রেকর্ড নেই।' : 'No hospitalization records on file.'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Patient Information Summary Card */}
+            {/* Patient Information Card with Integrated Allergies & Chronic Conditions */}
             <div className="pd-card pd-info-summary-card">
               <div className="pd-card-header-row">
                 <div className="pd-card-title-wrap">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D9488" strokeWidth="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   </svg>
-                  <h3 className="pd-card-title-sm">{lang === 'bn' ? 'রোগীর তথ্য' : 'Patient Information'}</h3>
+                  <h3 className="pd-card-title-sm">{lang === 'bn' ? 'রোগীর তথ্য ও স্বাস্থ্য বিবরণ' : 'Patient Information'}</h3>
                 </div>
+                <Link to="/profile" className="pd-card-action-link">
+                  {lang === 'bn' ? 'সম্পাদনা →' : 'Edit →'}
+                </Link>
               </div>
 
               <div className="pd-card-content">
@@ -395,12 +361,12 @@ export default function PatientDashboard() {
                   </div>
 
                   <div className="pd-info-row">
-                    <span className="pd-info-key">{lang === 'bn' ? 'ইমেইল ঠিকানা:' : 'Email Address:'}</span>
+                    <span className="pd-info-key">{lang === 'bn' ? 'ইমেইল:' : 'Email:'}</span>
                     <span className="pd-info-value">{profile.email || 'ishika@test.com'}</span>
                   </div>
 
                   <div className="pd-info-row">
-                    <span className="pd-info-key">{lang === 'bn' ? 'ফোন নম্বর:' : 'Phone / Contact No:'}</span>
+                    <span className="pd-info-key">{lang === 'bn' ? 'ফোন নম্বর:' : 'Phone / Contact:'}</span>
                     <span className="pd-info-value">{profile.phone || 'Not provided'}</span>
                   </div>
 
@@ -412,6 +378,22 @@ export default function PatientDashboard() {
                   <div className="pd-info-row">
                     <span className="pd-info-key">{lang === 'bn' ? 'রক্তের গ্রুপ:' : 'Blood Group:'}</span>
                     <span className="pd-info-value red-bold">{profile.bloodGroup || 'Not specified'}</span>
+                  </div>
+
+                  {/* Allergies as plain text */}
+                  <div className="pd-info-row">
+                    <span className="pd-info-key">{lang === 'bn' ? 'অ্যালার্জি:' : 'Allergies:'}</span>
+                    <span className="pd-info-value">
+                      {formatListText(profile.allergies, lang === 'bn' ? 'কোনো জানা অ্যালার্জি নেই' : 'None recorded')}
+                    </span>
+                  </div>
+
+                  {/* Chronic Conditions as plain text */}
+                  <div className="pd-info-row">
+                    <span className="pd-info-key">{lang === 'bn' ? 'দীর্ঘস্থায়ী রোগ:' : 'Chronic Conditions:'}</span>
+                    <span className="pd-info-value">
+                      {formatListText(profile.chronicConditions, lang === 'bn' ? 'কোনো দীর্ঘস্থায়ী রোগ নেই' : 'None recorded')}
+                    </span>
                   </div>
 
                   <div className="pd-info-row">
@@ -426,7 +408,7 @@ export default function PatientDashboard() {
                 </div>
 
                 <button className="pd-update-profile-btn" onClick={() => navigate('/profile')}>
-                  {lang === 'bn' ? 'প্রোফাইল তথ্য আপডেট করুন' : 'Update Profile Info'}
+                  {lang === 'bn' ? 'প্রোফাইল তথ্য ও স্বাস্থ্য রেকর্ড সম্পাদনা' : 'Edit Profile & Health Info'}
                 </button>
               </div>
             </div>
@@ -436,6 +418,125 @@ export default function PatientDashboard() {
         </div>
 
       </div>
+
+      {/* ================= ADD MEDICATION MODAL ================= */}
+      {showAddMedModal && (
+        <div className="pd-modal-overlay" onClick={() => setShowAddMedModal(false)}>
+          <div className="pd-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="pd-modal-header">
+              <div className="pd-modal-header-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D9488" strokeWidth="2">
+                  <path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>
+                </svg>
+                <h3>{lang === 'bn' ? 'নতুন চলমান ওষুধ যোগ করুন' : 'Add Running Medication'}</h3>
+              </div>
+              <button className="pd-modal-close" onClick={() => setShowAddMedModal(false)}>✕</button>
+            </div>
+
+            <form onSubmit={handleSaveMed} className="pd-med-form">
+              <div className="pd-form-field">
+                <label>{lang === 'bn' ? 'ওষুধের নাম *' : 'Medicine Name *'}</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder={lang === 'bn' ? 'যেমন: Concor 5mg, Napa Extra, Sergel 20mg' : 'e.g., Concor 5mg, Metformin 500mg, Napa Extra'}
+                  value={newMedName}
+                  onChange={e => setNewMedName(e.target.value)}
+                />
+              </div>
+
+              <div className="pd-form-field">
+                <label>{lang === 'bn' ? 'ডোজ ও সময়সূচী' : 'Dosage & Frequency'}</label>
+                <input 
+                  type="text" 
+                  placeholder={lang === 'bn' ? 'যেমন: ১টি ট্যাবলেট সকালে খাবারের পর (1 Tablet Daily)' : 'e.g., 1 Tablet Daily (Morning after meal)'}
+                  value={newMedDose}
+                  onChange={e => setNewMedDose(e.target.value)}
+                />
+              </div>
+
+              <div className="pd-form-field">
+                <label>{lang === 'bn' ? 'পরামর্শদাতা ডাক্তার / উৎস' : 'Prescribed By Doctor'}</label>
+                <input 
+                  type="text" 
+                  placeholder={lang === 'bn' ? 'যেমন: Dr. Imran Kabir (Cardiologist)' : 'e.g., Dr. Imran Kabir / Self Prescribed'}
+                  value={newMedDoc}
+                  onChange={e => setNewMedDoc(e.target.value)}
+                />
+              </div>
+
+              <div className="pd-modal-actions">
+                <button type="button" className="pd-modal-cancel" onClick={() => setShowAddMedModal(false)}>
+                  {lang === 'bn' ? 'বাতিল' : 'Cancel'}
+                </button>
+                <button type="submit" className="pd-modal-submit">
+                  {lang === 'bn' ? 'ওষুধ সংরক্ষণ করুন' : 'Save Medication'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= BLOOD REQUESTS MODAL POPUP ================= */}
+      {showBloodModal && (
+        <div className="pd-modal-overlay" onClick={() => setShowBloodModal(false)}>
+          <div className="pd-modal-content pd-blood-popup" onClick={e => e.stopPropagation()}>
+            <div className="pd-modal-header pd-blood-popup-header">
+              <div className="pd-modal-header-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.2">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                </svg>
+                <h3>{lang === 'bn' ? 'আপনার রক্তের গ্রুপের অনুরোধসমূহ' : 'Blood Requests For You'}</h3>
+              </div>
+              <button className="pd-modal-close" onClick={() => setShowBloodModal(false)} title="Close">✕</button>
+            </div>
+
+            <div className="pd-blood-modal-body">
+              {bloodRequests.length > 0 ? (
+                <div className="pd-blood-requests-list">
+                  {bloodRequests.map(req => (
+                    <div key={req.id} className="pd-blood-req-item">
+                      <div className="pd-blood-req-header">
+                        <div className="pd-blood-req-user">
+                          <strong className="pd-req-patient-name">{req.patientName}</strong>
+                          <span className="pd-req-hospital">{req.hospital} • {req.wardRoom}</span>
+                        </div>
+                        <span className="pd-blood-group-badge">{req.bloodGroup} ({req.unitsNeeded} Units)</span>
+                      </div>
+
+                      <p className="pd-blood-req-msg">"{req.message}"</p>
+
+                      <div className="pd-blood-req-footer">
+                        <div className="pd-req-contact-info">
+                          {req.requesterEmail && (
+                            <a href={`mailto:${req.requesterEmail}`} className="pd-req-contact-link">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                              {req.requesterEmail}
+                            </a>
+                          )}
+                        </div>
+
+                        <button 
+                          type="button" 
+                          className="pd-dismiss-req-btn"
+                          onClick={() => handleDismissBloodRequest(req.id)}
+                        >
+                          {lang === 'bn' ? 'সম্পন্ন' : 'Dismiss'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="pd-empty-box">
+                  <p className="pd-empty-text">{lang === 'bn' ? 'কোনো সক্রিয় রক্তের অনুরোধ নেই' : 'No active blood requests currently.'}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
